@@ -2,8 +2,10 @@
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Command } from "cmdk";
+import { useQuery } from "@tanstack/react-query";
 import {
   BookMarked,
+  FileSearch,
   FileCheck2,
   GitCompareArrows,
   Home,
@@ -16,6 +18,7 @@ import {
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { Kbd } from "@/components/ui/kbd";
+import { API_BASE } from "@/lib/api";
 import { useComparisons } from "@/lib/comparison-queries";
 import { useGuides } from "@/lib/queries";
 import { useTheme } from "@/lib/theme";
@@ -50,12 +53,48 @@ function Item({
 const groupClass =
   "[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-fg-subtle";
 
+interface SearchHit {
+  chunk_id: string;
+  guide_id: string;
+  guide_name: string;
+  page: number;
+  heading_path: string[];
+  snippet: string;
+  regions: { page: number; bbox?: number[] | null }[];
+  element_ids: string[];
+}
+
+function useDebounced<T>(value: T, ms: number) {
+  const [v, setV] = React.useState(value);
+  React.useEffect(() => {
+    const t = setTimeout(() => setV(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return v;
+}
+
 export function CommandPalette() {
   const ui = useUIState();
   const router = useRouter();
   const { setPref } = useTheme();
   const { data: guides } = useGuides();
   const { data: comparisons } = useComparisons();
+  const [input, setInput] = React.useState("");
+  const query = useDebounced(input.trim(), 250);
+  const { data: results, isFetching } = useQuery({
+    queryKey: ["search", query],
+    enabled: ui.paletteOpen && query.length >= 3,
+    staleTime: 60_000,
+    queryFn: async (): Promise<SearchHit[]> => {
+      const res = await fetch(`${API_BASE}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, top_k: 6 }),
+      });
+      if (!res.ok) return [];
+      return (await res.json()).hits;
+    },
+  });
 
   const run = (fn: () => void) => {
     ui.setPaletteOpen(false);
@@ -63,7 +102,13 @@ export function CommandPalette() {
   };
 
   return (
-    <DialogPrimitive.Root open={ui.paletteOpen} onOpenChange={ui.setPaletteOpen}>
+    <DialogPrimitive.Root
+      open={ui.paletteOpen}
+      onOpenChange={(o) => {
+        ui.setPaletteOpen(o);
+        if (!o) setInput("");
+      }}
+    >
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/25 data-[state=open]:animate-[fade-in_120ms_ease-out]" />
         <DialogPrimitive.Content
@@ -73,12 +118,50 @@ export function CommandPalette() {
           <DialogPrimitive.Title className="sr-only">Command palette</DialogPrimitive.Title>
           <Command loop>
             <Command.Input
+              value={input}
+              onValueChange={setInput}
               autoFocus
-              placeholder="Search guides, comparisons and actions…"
+              placeholder="Search inside guides, or jump to anything…"
               className="h-12 w-full border-b border-border bg-transparent px-4 text-[15px] outline-none placeholder:text-fg-subtle"
             />
             <Command.List className="max-h-[min(60vh,420px)] overflow-y-auto p-1.5">
-              <Command.Empty className="px-3 py-8 text-center text-sm text-fg-subtle">No results.</Command.Empty>
+              <Command.Empty className="px-3 py-8 text-center text-sm text-fg-subtle">
+                {isFetching ? "Searching guides…" : "No results."}
+              </Command.Empty>
+
+              {!!results?.length && input.trim().length >= 3 && (
+                <Command.Group heading="Found in guides" className={groupClass}>
+                  {results.map((h) => (
+                    <Command.Item
+                      key={h.chunk_id}
+                      value={`${input} ${h.chunk_id}`}
+                      onSelect={() =>
+                        run(() =>
+                          ui.openSource({
+                            guideId: h.guide_id,
+                            page: h.page,
+                            bbox: h.regions.find((r) => r.bbox)?.bbox,
+                            regions: h.regions.slice(1),
+                            elementIds: h.element_ids,
+                            elementId: h.element_ids[0],
+                            chunkId: h.chunk_id,
+                            label: h.heading_path.at(-1) ?? h.guide_name,
+                          }),
+                        )
+                      }
+                      className="flex cursor-pointer items-start gap-2.5 rounded-md px-2.5 py-2 text-sm text-fg-muted data-[selected=true]:bg-surface-sunken data-[selected=true]:text-fg"
+                    >
+                      <FileSearch className="mt-0.5 size-4 shrink-0 text-fg-subtle" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[12px] text-fg-subtle">
+                          {h.guide_name} · {h.heading_path.slice(-2).join(" › ")} · p. {h.page}
+                        </span>
+                        <span className="line-clamp-2 text-[13px] leading-snug">{h.snippet}</span>
+                      </span>
+                    </Command.Item>
+                  ))}
+                </Command.Group>
+              )}
 
               {!!guides?.length && (
                 <Command.Group heading="Guides" className={groupClass}>

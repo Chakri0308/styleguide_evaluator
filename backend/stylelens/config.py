@@ -46,8 +46,12 @@ class Settings(BaseSettings):
     # Retrieval tuning
     retrieval_candidates: int = 50
     rerank_top_k: int = 6
-    rerank_threshold: float = 0.15
+    # Minimum reranker score for a passage to count as relevant. Unset = the reranker's own default
+    # (cross-encoder probability 0.15, lexical coverage 0.3).
+    rerank_threshold: float | None = None
     rrf_k: int = 60
+    # Generate 2-3 LLM query variants per question (multi-query). Off by default: costs an LLM call.
+    multi_query: bool = False
 
     # Comparison tuning
     delta_e_exact: float = 1.0

@@ -1,0 +1,197 @@
+{
+ "reference": "northwind_guide.pdf",
+ "candidate": "northwind_partner.pdf",
+ "expected": [
+  {
+   "id": "cmp-primary",
+   "category": "colors",
+   "status": [
+    "deviation",
+    "compliant"
+   ],
+   "keywords": [
+    "#1D51A0",
+    "Northwind Blue",
+    "Harbor Blue"
+   ],
+   "note": "near match \u0394E<3"
+  },
+  {
+   "id": "cmp-cream",
+   "category": "colors",
+   "status": [
+    "deviation"
+   ],
+   "keywords": [
+    "#E8C9A0",
+    "Cream",
+    "Crema"
+   ]
+  },
+  {
+   "id": "cmp-orange",
+   "category": "colors",
+   "status": [
+    "new",
+    "deviation",
+    "conflict"
+   ],
+   "keywords": [
+    "#FF5A1F",
+    "Fieldhouse Orange"
+   ]
+  },
+  {
+   "id": "cmp-gray-text",
+   "category": "accessibility",
+   "status": [
+    "deviation",
+    "conflict"
+   ],
+   "keywords": [
+    "#A0A0A0",
+    "contrast"
+   ]
+  },
+  {
+   "id": "cmp-headline-font",
+   "category": "typography",
+   "status": [
+    "deviation",
+    "conflict"
+   ],
+   "keywords": [
+    "Montserrat"
+   ]
+  },
+  {
+   "id": "cmp-caps",
+   "category": "voice_tone",
+   "status": [
+    "conflict",
+    "deviation"
+   ],
+   "keywords": [
+    "ALL CAPS",
+    "caps"
+   ]
+  },
+  {
+   "id": "cmp-exclaim",
+   "category": "voice_tone",
+   "status": [
+    "conflict",
+    "deviation"
+   ],
+   "keywords": [
+    "exclamation"
+   ]
+  },
+  {
+   "id": "cmp-oxford",
+   "category": "writing_rules",
+   "status": [
+    "conflict",
+    "deviation"
+   ],
+   "keywords": [
+    "Oxford"
+   ]
+  },
+  {
+   "id": "cmp-dates",
+   "category": "writing_rules",
+   "status": [
+    "conflict",
+    "deviation"
+   ],
+   "keywords": [
+    "4th",
+    "ordinal",
+    "date"
+   ]
+  },
+  {
+   "id": "cmp-logo-photo",
+   "category": "logo_rules",
+   "status": [
+    "conflict",
+    "deviation"
+   ],
+   "keywords": [
+    "photograph",
+    "photo"
+   ]
+  },
+  {
+   "id": "cmp-logo-size",
+   "category": "logo_rules",
+   "status": [
+    "conflict",
+    "deviation"
+   ],
+   "keywords": [
+    "16px",
+    "minimum"
+   ]
+  },
+  {
+   "id": "cmp-caption-size",
+   "category": "typography",
+   "status": [
+    "deviation",
+    "conflict"
+   ],
+   "keywords": [
+    "11px",
+    "caption"
+   ]
+  },
+  {
+   "id": "cmp-orange-bg",
+   "category": "color_usage",
+   "status": [
+    "conflict",
+    "deviation",
+    "new"
+   ],
+   "keywords": [
+    "full-bleed",
+    "background",
+    "Orange"
+   ]
+  },
+  {
+   "id": "cmp-numbers",
+   "category": "writing_rules",
+   "status": [
+    "compliant"
+   ],
+   "keywords": [
+    "numerals",
+    "one through nine"
+   ]
+  },
+  {
+   "id": "cmp-clear-space",
+   "category": "logo_rules",
+   "status": [
+    "compliant"
+   ],
+   "keywords": [
+    "clear space"
+   ]
+  },
+  {
+   "id": "cmp-missing-a11y",
+   "category": "accessibility",
+   "status": [
+    "missing"
+   ],
+   "keywords": [
+    "WCAG",
+    "44"
+   ]
+  }
+ ]
+}

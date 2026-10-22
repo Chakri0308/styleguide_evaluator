@@ -82,7 +82,7 @@ async def run_ingestion(version_id: str) -> None:
             await reporter.update(name, status="running", version_status="processing")
             await fn(version_id, reporter)
             await reporter.update(name, status="done")
-        await reporter.update("indexing", version_status="ready", message="Ready")
+        await reporter.update("indexing", version_status="ready")
     except Exception as exc:  # noqa: BLE001
         log.exception("ingestion failed for %s", version_id)
         await reporter.update(current, status="failed", message=str(exc)[:500],

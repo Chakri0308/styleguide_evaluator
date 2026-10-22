@@ -1,0 +1,766 @@
+[
+ {
+  "id": "nw-01",
+  "guide": "northwind",
+  "question": "What is the primary brand color?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "primary brand color"
+  ],
+  "answer_keywords": [
+   "Harbor Blue",
+   "#1B4F9C"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-02",
+  "guide": "northwind",
+  "question": "What's the hex code for Crema?",
+  "expected_sections": [
+   "Palette"
+  ],
+  "expected_phrases": [
+   "#F2E3C6"
+  ],
+  "answer_keywords": [
+   "#F2E3C6"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-03",
+  "guide": "northwind",
+  "question": "Which colour should be used for calls to action?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "calls to action"
+  ],
+  "answer_keywords": [
+   "Ember"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-04",
+  "guide": "northwind",
+  "question": "Can I use pure black for body text?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "pure black"
+  ],
+  "answer_keywords": [
+   "Roast",
+   "#3B2A20"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-05",
+  "guide": "northwind",
+  "question": "Is it OK to put Ember text on Harbor Blue?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "Ember text on Harbor Blue"
+  ],
+  "answer_keywords": [
+   "contrast"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-06",
+  "guide": "northwind",
+  "question": "What is the Pantone value for Harbor Blue?",
+  "expected_sections": [
+   "Palette"
+  ],
+  "expected_phrases": [
+   "2945 C"
+  ],
+  "answer_keywords": [
+   "2945"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-07",
+  "guide": "northwind",
+  "question": "How much of a layout can Ember cover?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "10%"
+  ],
+  "answer_keywords": [
+   "10%"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-08",
+  "guide": "northwind",
+  "question": "Can I add new colors that aren't in the palette?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "outside this palette"
+  ],
+  "answer_keywords": [
+   "tints"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-09",
+  "guide": "northwind",
+  "question": "What contrast ratio does Roast on Crema have?",
+  "expected_sections": [
+   "pairings"
+  ],
+  "expected_phrases": [
+   "11.9:1"
+  ],
+  "answer_keywords": [
+   "11.9"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-10",
+  "guide": "northwind",
+  "question": "What typeface is used for headlines?",
+  "expected_sections": [
+   "Typography"
+  ],
+  "expected_phrases": [
+   "Fraunces"
+  ],
+  "answer_keywords": [
+   "Fraunces"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-11",
+  "guide": "northwind",
+  "question": "What font should body copy use?",
+  "expected_sections": [
+   "Typography"
+  ],
+  "expected_phrases": [
+   "Inter Regular"
+  ],
+  "answer_keywords": [
+   "Inter"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-12",
+  "guide": "northwind",
+  "question": "What size is H1?",
+  "expected_sections": [
+   "Type Scale"
+  ],
+  "expected_phrases": [
+   "48px"
+  ],
+  "answer_keywords": [
+   "48px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-13",
+  "guide": "northwind",
+  "question": "What's the line height for body text?",
+  "expected_sections": [
+   "Type Scale"
+  ],
+  "expected_phrases": [
+   "16px / 24px"
+  ],
+  "answer_keywords": [
+   "24px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-14",
+  "guide": "northwind",
+  "question": "What is the minimum body text size on screen?",
+  "expected_sections": [
+   "Typography"
+  ],
+  "expected_phrases": [
+   "14px"
+  ],
+  "answer_keywords": [
+   "14px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-15",
+  "guide": "northwind",
+  "question": "Should body copy be justified?",
+  "expected_sections": [
+   "Typography"
+  ],
+  "expected_phrases": [
+   "justify"
+  ],
+  "answer_keywords": [
+   "left-align"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-16",
+  "guide": "northwind",
+  "question": "What's the fallback font for Fraunces?",
+  "expected_sections": [
+   "Typeface"
+  ],
+  "expected_phrases": [
+   "Georgia"
+  ],
+  "answer_keywords": [
+   "Georgia"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-17",
+  "guide": "northwind",
+  "question": "How much clear space does the logo need?",
+  "expected_sections": [
+   "Clear Space"
+  ],
+  "expected_phrases": [
+   "clear space"
+  ],
+  "answer_keywords": [
+   "N"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-18",
+  "guide": "northwind",
+  "question": "What's the smallest size I can use the logo at?",
+  "expected_sections": [
+   "Minimum Size"
+  ],
+  "expected_phrases": [
+   "24px"
+  ],
+  "answer_keywords": [
+   "24px",
+   "12mm"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-19",
+  "guide": "northwind",
+  "question": "Can I put the logo on top of a photo?",
+  "expected_sections": [
+   "Logo"
+  ],
+  "expected_phrases": [
+   "busy photographic"
+  ],
+  "answer_keywords": [
+   "busy",
+   "photographic"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-20",
+  "guide": "northwind",
+  "question": "Can I add a drop shadow to the logo?",
+  "expected_sections": [
+   "Logo Misuse"
+  ],
+  "expected_phrases": [
+   "drop shadows"
+  ],
+  "answer_keywords": [
+   "drop shadow"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-21",
+  "guide": "northwind",
+  "question": "What colors can the logo be shown in?",
+  "expected_sections": [
+   "Logo"
+  ],
+  "expected_phrases": [
+   "recolor"
+  ],
+  "answer_keywords": [
+   "Harbor Blue",
+   "Roast",
+   "white"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-22",
+  "guide": "northwind",
+  "question": "What should I use when the logo would be too small?",
+  "expected_sections": [
+   "Minimum Size"
+  ],
+  "expected_phrases": [
+   "monogram"
+  ],
+  "answer_keywords": [
+   "monogram"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-23",
+  "guide": "northwind",
+  "question": "What kind of photography should we use?",
+  "expected_sections": [
+   "Photography"
+  ],
+  "expected_phrases": [
+   "natural window light"
+  ],
+  "answer_keywords": [
+   "real people"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-24",
+  "guide": "northwind",
+  "question": "Are AI-generated images of people allowed?",
+  "expected_sections": [
+   "Imagery"
+  ],
+  "expected_phrases": [
+   "AI-generated"
+  ],
+  "answer_keywords": [
+   "never"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-25",
+  "guide": "northwind",
+  "question": "Should we use the Oxford comma?",
+  "expected_sections": [
+   "Writing"
+  ],
+  "expected_phrases": [
+   "Oxford"
+  ],
+  "answer_keywords": [
+   "Oxford"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-26",
+  "guide": "northwind",
+  "question": "How should dates be written?",
+  "expected_sections": [
+   "Writing"
+  ],
+  "expected_phrases": [
+   "March 4, 2025"
+  ],
+  "answer_keywords": [
+   "March 4, 2025"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-27",
+  "guide": "northwind",
+  "question": "When should numbers be spelled out?",
+  "expected_sections": [
+   "Writing"
+  ],
+  "expected_phrases": [
+   "spell out"
+  ],
+  "answer_keywords": [
+   "one through nine"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-28",
+  "guide": "northwind",
+  "question": "How do we format prices?",
+  "expected_sections": [
+   "Writing"
+  ],
+  "expected_phrases": [
+   "$4.50"
+  ],
+  "answer_keywords": [
+   "$4.50"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-29",
+  "guide": "northwind",
+  "question": "Can we call people consumers?",
+  "expected_sections": [
+   "Voice",
+   "Writing"
+  ],
+  "expected_phrases": [
+   "consumers"
+  ],
+  "answer_keywords": [
+   "you"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-30",
+  "guide": "northwind",
+  "question": "Can headlines use exclamation marks?",
+  "expected_sections": [
+   "Voice"
+  ],
+  "expected_phrases": [
+   "exclamation"
+  ],
+  "answer_keywords": [
+   "exclamation"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-31",
+  "guide": "northwind",
+  "question": "Is it okay to say our coffee is the best ever?",
+  "expected_sections": [
+   "Voice"
+  ],
+  "expected_phrases": [
+   "superlatives"
+  ],
+  "answer_keywords": [
+   "superlatives"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-32",
+  "guide": "northwind",
+  "question": "Can I use ALL CAPS to emphasize a word?",
+  "expected_sections": [
+   "Voice"
+  ],
+  "expected_phrases": [
+   "ALL CAPS"
+  ],
+  "answer_keywords": [
+   "sentence case"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-33",
+  "guide": "northwind",
+  "question": "What's our tone for error messages?",
+  "expected_sections": [
+   "Tone"
+  ],
+  "expected_phrases": [
+   "Apologetic"
+  ],
+  "answer_keywords": [
+   "apologetic"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-34",
+  "guide": "northwind",
+  "question": "What contrast ratio does body text need?",
+  "expected_sections": [
+   "Accessibility"
+  ],
+  "expected_phrases": [
+   "4.5:1"
+  ],
+  "answer_keywords": [
+   "4.5:1"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-35",
+  "guide": "northwind",
+  "question": "How big should tap targets be?",
+  "expected_sections": [
+   "Accessibility"
+  ],
+  "expected_phrases": [
+   "44 by 44"
+  ],
+  "answer_keywords": [
+   "44"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-36",
+  "guide": "northwind",
+  "question": "What do primary buttons look like?",
+  "expected_sections": [
+   "Buttons"
+  ],
+  "expected_phrases": [
+   "Primary buttons"
+  ],
+  "answer_keywords": [
+   "Harbor Blue",
+   "8px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-37",
+  "guide": "northwind",
+  "question": "What spacing scale do we use?",
+  "expected_sections": [
+   "Spacing"
+  ],
+  "expected_phrases": [
+   "8px spacing scale"
+  ],
+  "answer_keywords": [
+   "8px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-38",
+  "guide": "northwind",
+  "question": "How many columns is the web grid?",
+  "expected_sections": [
+   "grid"
+  ],
+  "expected_phrases": [
+   "12-column"
+  ],
+  "answer_keywords": [
+   "12"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-39",
+  "guide": "northwind",
+  "question": "Should we say artisanal?",
+  "expected_sections": [
+   "Words"
+  ],
+  "expected_phrases": [
+   "artisanal"
+  ],
+  "answer_keywords": [
+   "small-batch"
+  ],
+  "covered": true
+ },
+ {
+  "id": "nw-40",
+  "guide": "northwind",
+  "question": "What is the brand's personality?",
+  "expected_sections": [
+   "Personality"
+  ],
+  "expected_phrases": [
+   "Warm"
+  ],
+  "answer_keywords": [
+   "warm"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-01",
+  "guide": "lumen",
+  "question": "What's the minimum body font size on mobile?",
+  "expected_sections": [
+   "Typography"
+  ],
+  "expected_phrases": [
+   "17px"
+  ],
+  "answer_keywords": [
+   "17px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-02",
+  "guide": "lumen",
+  "question": "What reading level should we write at?",
+  "expected_sections": [
+   "Reading level"
+  ],
+  "expected_phrases": [
+   "8th-grade"
+  ],
+  "answer_keywords": [
+   "8th"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-03",
+  "guide": "lumen",
+  "question": "Can Coral Alert be used in marketing?",
+  "expected_sections": [
+   "Color"
+  ],
+  "expected_phrases": [
+   "Coral Alert"
+  ],
+  "answer_keywords": [
+   "errors"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-04",
+  "guide": "lumen",
+  "question": "How should medical terms be written?",
+  "expected_sections": [
+   "Medical language"
+  ],
+  "expected_phrases": [
+   "parentheses"
+  ],
+  "answer_keywords": [
+   "plain"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-05",
+  "guide": "lumen",
+  "question": "How do we write times?",
+  "expected_sections": [
+   "Mechanics"
+  ],
+  "expected_phrases": [
+   "9:30 a.m."
+  ],
+  "answer_keywords": [
+   "a.m."
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-06",
+  "guide": "lumen",
+  "question": "What size are touch targets?",
+  "expected_sections": [
+   "Accessibility"
+  ],
+  "expected_phrases": [
+   "48 by 48"
+  ],
+  "answer_keywords": [
+   "48"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-07",
+  "guide": "lumen",
+  "question": "What icon stroke width do we use?",
+  "expected_sections": [
+   "Iconography"
+  ],
+  "expected_phrases": [
+   "1.5px"
+  ],
+  "answer_keywords": [
+   "1.5px"
+  ],
+  "covered": true
+ },
+ {
+  "id": "lu-08",
+  "guide": "lumen",
+  "question": "Can product copy diagnose a condition?",
+  "expected_sections": [
+   "Medical language"
+  ],
+  "expected_phrases": [
+   "diagnosis"
+  ],
+  "answer_keywords": [
+   "care team"
+  ],
+  "covered": true
+ },
+ {
+  "id": "x-01",
+  "guide": "northwind",
+  "question": "What is the company's annual revenue?",
+  "expected_sections": [],
+  "expected_phrases": [],
+  "answer_keywords": [],
+  "covered": false
+ },
+ {
+  "id": "x-02",
+  "guide": "northwind",
+  "question": "Which printer vendor do we use for packaging?",
+  "expected_sections": [],
+  "expected_phrases": [],
+  "answer_keywords": [],
+  "covered": false
+ },
+ {
+  "id": "x-03",
+  "guide": "lumen",
+  "question": "What is Lumen's stock ticker symbol?",
+  "expected_sections": [],
+  "expected_phrases": [],
+  "answer_keywords": [],
+  "covered": false
+ },
+ {
+  "id": "x-04",
+  "guide": "northwind",
+  "question": "How do I reset my email password?",
+  "expected_sections": [],
+  "expected_phrases": [],
+  "answer_keywords": [],
+  "covered": false
+ }
+]

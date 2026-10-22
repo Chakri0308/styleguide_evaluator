@@ -113,12 +113,74 @@ async def extract(version_id: str, r: StageReporter) -> None:
 
 
 async def chunk(version_id: str, r: StageReporter) -> None:
-    pass
+    from sqlalchemy import select
+
+    from stylelens.db.models import Chunk
+    from stylelens.db.models import StyleProfile as ProfileRow
+    from stylelens.extraction.common import from_row
+    from stylelens.retrieval.chunking import build_chunks
+
+    async with SessionLocal() as session:
+        version = await session.get(GuideVersion, version_id)
+        rows = list(await session.scalars(
+            select(Element).where(Element.version_id == version_id).order_by(Element.seq)))
+        profile = await session.get(ProfileRow, version_id)
+        title = version.title
+    images = {i["element_id"]: i for i in (profile.data.get("images", []) if profile else [])}
+    drafts = build_chunks(version_id, title, [from_row(x) for x in rows], images)
+    async with SessionLocal() as session:
+        await session.execute(delete(Chunk).where(Chunk.version_id == version_id))
+        session.add_all([
+            Chunk(id=d.id, version_id=version_id, kind=d.kind, parent_id=d.parent_id, seq=d.seq,
+                  heading_path=d.heading_path, category=d.category, text=d.text, context_header=d.context_header,
+                  page_start=d.page_start, page_end=d.page_end, regions=d.regions, element_ids=d.element_ids,
+                  token_count=d.token_count, image_key=d.image_key)
+            for d in drafts
+        ])
+        await session.commit()
+    kinds = {k: sum(1 for d in drafts if d.kind == k) for k in ("parent", "child", "image")}
+    await r.update("chunking", message=f"{kinds['child']} passages, {kinds['parent']} sections, {kinds['image']} images")
+
+
+EMBED_BATCH = 32
 
 
 async def embed(version_id: str, r: StageReporter) -> None:
-    pass
+    from sqlalchemy import select, update
+
+    from stylelens.db.models import Chunk
+    from stylelens.retrieval.models import aembed, get_embedder
+
+    await r.update("embedding", message="Loading embedding model")
+    embedder = await asyncio.to_thread(get_embedder)
+    async with SessionLocal() as session:
+        rows = (await session.execute(
+            select(Chunk.id, Chunk.context_header, Chunk.text)
+            .where(Chunk.version_id == version_id, Chunk.kind.in_(("child", "image")))
+            .order_by(Chunk.seq))).all()
+    for i in range(0, len(rows), EMBED_BATCH):
+        batch = rows[i : i + EMBED_BATCH]
+        vectors = await aembed([f"{h}\n\n{t}" for _, h, t in batch])
+        async with SessionLocal() as session:
+            for (cid, _, _), vec in zip(batch, vectors, strict=True):
+                await session.execute(update(Chunk).where(Chunk.id == cid).values(embedding=vec.tolist()))
+            await session.commit()
+        await r.update("embedding", progress=min(1.0, (i + len(batch)) / max(len(rows), 1)),
+                       message=f"{i + len(batch)} of {len(rows)} passages")
+    async with SessionLocal() as session:
+        version = await session.get(GuideVersion, version_id)
+        version.embedding_model = embedder.name
+        await session.commit()
 
 
 async def index(version_id: str, r: StageReporter) -> None:
-    pass
+    from sqlalchemy import func, select, text
+
+    from stylelens.db.models import Chunk
+
+    async with SessionLocal() as session:
+        n = await session.scalar(select(func.count()).select_from(Chunk).where(
+            Chunk.version_id == version_id, Chunk.embedding.is_not(None)))
+        await session.execute(text("ANALYZE chunks"))
+        await session.commit()
+    await r.update("indexing", message=f"{n} passages searchable (hybrid lexical + vector)")
