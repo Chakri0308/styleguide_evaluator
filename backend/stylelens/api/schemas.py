@@ -6,10 +6,12 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ORM(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, json_schema_serialization_defaults_required=True)
 
 
 class StageOut(BaseModel):
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)
+
     status: str
     progress: float = 0.0
     message: str = ""

@@ -131,6 +131,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/guides/{guide_id}/elements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Guide Elements
+         * @description Parsed layout elements of the current version (used by the text source viewer).
+         */
+        get: operations["guide_elements_guides__guide_id__elements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/guides/{guide_id}/profile": {
         parameters: {
             query?: never;
@@ -201,6 +221,94 @@ export interface components {
             /** Name */
             name?: string | null;
         };
+        /** ColorItem */
+        ColorItem: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string | null;
+            /** Role */
+            role: string | null;
+            /** Value */
+            value: string;
+            /** Hex */
+            hex: string;
+            /** Rgb */
+            rgb: string | null;
+            /** Cmyk */
+            cmyk: string | null;
+            /** Hsl */
+            hsl: string | null;
+            /** Pantone */
+            pantone: string | null;
+            /** Lab */
+            lab: number[];
+            /**
+             * Normative Level
+             * @default should
+             * @enum {string}
+             */
+            normative_level: "must" | "should" | "may";
+            /**
+             * Status
+             * @default approved
+             * @enum {string}
+             */
+            status: "approved" | "prohibited";
+            /** Usage */
+            usage: string[];
+            /** Origin */
+            origin: ("text" | "swatch" | "image" | "llm")[];
+            /** Source Refs */
+            source_refs: components["schemas"]["SourceRef"][];
+        };
+        /** ElementOut */
+        ElementOut: {
+            /** Id */
+            id: string;
+            /** Seq */
+            seq: number;
+            /** Page */
+            page: number;
+            /** Bbox */
+            bbox: number[] | null;
+            /** Type */
+            type: string;
+            /** Heading Path */
+            heading_path: string[];
+            /** Level */
+            level: number | null;
+            /** Text */
+            text: string;
+            /** Meta */
+            meta: {
+                [key: string]: unknown;
+            };
+            /** Image Key */
+            image_key: string | null;
+        };
+        /** FontUsage */
+        FontUsage: {
+            /** Family */
+            family: string;
+            /** Sizes */
+            sizes: number[];
+            /**
+             * Bold
+             * @default false
+             */
+            bold: boolean;
+            /**
+             * Chars
+             * @default 0
+             */
+            chars: number;
+            /**
+             * Embedded
+             * @default false
+             */
+            embedded: boolean;
+        };
         /** GuideOut */
         GuideOut: {
             /** Id */
@@ -226,7 +334,7 @@ export interface components {
             created_at: string;
             /** Current Version Id */
             current_version_id: string | null;
-            current_version?: components["schemas"]["GuideVersionOut"] | null;
+            current_version: components["schemas"]["GuideVersionOut"] | null;
         };
         /** GuideVersionOut */
         GuideVersionOut: {
@@ -259,6 +367,48 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** ImageItem */
+        ImageItem: {
+            /** Id */
+            id: string;
+            /** Element Id */
+            element_id: string;
+            /** Page */
+            page: number;
+            /** Bbox */
+            bbox: number[] | null;
+            /** Image Url */
+            image_url: string;
+            /**
+             * Kind
+             * @default other
+             */
+            kind: string;
+            /**
+             * Example
+             * @default neutral
+             * @enum {string}
+             */
+            example: "do" | "dont" | "neutral";
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /** Caption */
+            caption: string | null;
+            /** Rules Depicted */
+            rules_depicted: string[];
+            /** Dominant Colors */
+            dominant_colors: string[];
+            /** Text In Image */
+            text_in_image: string | null;
+            /**
+             * Described By
+             * @default heuristic
+             */
+            described_by: string;
+        };
         /** IngestionStatus */
         IngestionStatus: {
             /** Guide Id */
@@ -287,6 +437,89 @@ export interface components {
             /** Image Url */
             image_url: string | null;
         };
+        /** ProfileStats */
+        ProfileStats: {
+            /**
+             * Pages
+             * @default 0
+             */
+            pages: number;
+            /**
+             * Elements
+             * @default 0
+             */
+            elements: number;
+            /**
+             * Rules
+             * @default 0
+             */
+            rules: number;
+            /**
+             * Colors
+             * @default 0
+             */
+            colors: number;
+            /**
+             * Images
+             * @default 0
+             */
+            images: number;
+            /**
+             * Llm Used
+             * @default false
+             */
+            llm_used: boolean;
+            /** Extraction Model */
+            extraction_model: string | null;
+            /** Warnings */
+            warnings: string[];
+        };
+        /** RuleItem */
+        RuleItem: {
+            /** Id */
+            id: string;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "logo_rules" | "spacing_grid" | "imagery_rules" | "voice_tone" | "writing_rules" | "components" | "accessibility" | "color_usage" | "typography_usage" | "misc_rules";
+            /** Statement */
+            statement: string;
+            /** Value */
+            value: string | null;
+            /** Role */
+            role: string | null;
+            /**
+             * Polarity
+             * @default do
+             * @enum {string}
+             */
+            polarity: "do" | "dont";
+            /**
+             * Normative Level
+             * @default should
+             * @enum {string}
+             */
+            normative_level: "must" | "should" | "may";
+            /** Source Refs */
+            source_refs: components["schemas"]["SourceRef"][];
+        };
+        /** SourceRef */
+        SourceRef: {
+            /** Element Id */
+            element_id: string;
+            /** Page */
+            page: number;
+            /** Bbox */
+            bbox: number[] | null;
+            /**
+             * Quote
+             * @default
+             */
+            quote: string;
+            /** Chunk Id */
+            chunk_id: string | null;
+        };
         /** StageOut */
         StageOut: {
             /** Status */
@@ -302,9 +535,86 @@ export interface components {
              */
             message: string;
             /** Started At */
-            started_at?: string | null;
+            started_at: string | null;
             /** Finished At */
-            finished_at?: string | null;
+            finished_at: string | null;
+        };
+        /** StyleProfile */
+        StyleProfile: {
+            /**
+             * Schema Version
+             * @default 1
+             * @constant
+             */
+            schema_version: 1;
+            /** Version Id */
+            version_id: string;
+            /** Title */
+            title: string | null;
+            /** Summary */
+            summary: string | null;
+            /** Colors */
+            colors: components["schemas"]["ColorItem"][];
+            /** Typography */
+            typography: components["schemas"]["TypographyItem"][];
+            /** Logo Rules */
+            logo_rules: components["schemas"]["RuleItem"][];
+            /** Spacing Grid */
+            spacing_grid: components["schemas"]["RuleItem"][];
+            /** Imagery Rules */
+            imagery_rules: components["schemas"]["RuleItem"][];
+            /** Voice Tone */
+            voice_tone: components["schemas"]["RuleItem"][];
+            /** Writing Rules */
+            writing_rules: components["schemas"]["RuleItem"][];
+            /** Components */
+            components: components["schemas"]["RuleItem"][];
+            /** Accessibility */
+            accessibility: components["schemas"]["RuleItem"][];
+            /** Color Usage */
+            color_usage: components["schemas"]["RuleItem"][];
+            /** Typography Usage */
+            typography_usage: components["schemas"]["RuleItem"][];
+            /** Misc Rules */
+            misc_rules: components["schemas"]["RuleItem"][];
+            /** Images */
+            images: components["schemas"]["ImageItem"][];
+            /** Fonts Detected */
+            fonts_detected: components["schemas"]["FontUsage"][];
+            stats: components["schemas"]["ProfileStats"];
+        };
+        /** TypographyItem */
+        TypographyItem: {
+            /** Id */
+            id: string;
+            /** Role */
+            role: string;
+            /** Family */
+            family: string;
+            /** Weight */
+            weight: string | null;
+            /** Size */
+            size: string | null;
+            /** Line Height */
+            line_height: string | null;
+            /** Letter Spacing */
+            letter_spacing: string | null;
+            /** Case */
+            case: string | null;
+            /** Fallbacks */
+            fallbacks: string[];
+            /** Value */
+            value: string;
+            /**
+             * Normative Level
+             * @default should
+             * @enum {string}
+             */
+            normative_level: "must" | "should" | "may";
+            /** Usage */
+            usage: string[];
+            /** Source Refs */
+            source_refs: components["schemas"]["SourceRef"][];
         };
         /** ValidationError */
         ValidationError: {
@@ -607,6 +917,39 @@ export interface operations {
             };
         };
     };
+    guide_elements_guides__guide_id__elements_get: {
+        parameters: {
+            query?: {
+                page?: number | null;
+            };
+            header?: never;
+            path: {
+                guide_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ElementOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     guide_profile_guides__guide_id__profile_get: {
         parameters: {
             query?: never;
@@ -624,7 +967,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["StyleProfile"];
                 };
             };
             /** @description Validation Error */

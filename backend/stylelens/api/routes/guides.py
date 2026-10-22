@@ -15,6 +15,7 @@ from stylelens.api.schemas import ElementOut, GuideOut, GuideVersionOut, Ingesti
 from stylelens.config import get_settings
 from stylelens.db.models import Element, Guide, GuideVersion, Page, StyleProfile
 from stylelens.db.session import SessionLocal, get_session
+from stylelens.schema.profile import StyleProfile as StyleProfileSchema
 from stylelens.formats import UnsupportedFormat, detect_format, mime_for
 from stylelens.storage import aget, aput
 
@@ -211,7 +212,7 @@ async def guide_elements(guide_id: str, page: int | None = None, session: AsyncS
     return list(await session.scalars(stmt))
 
 
-@router.get("/{guide_id}/profile")
+@router.get("/{guide_id}/profile", response_model=StyleProfileSchema)
 async def guide_profile(guide_id: str, session: AsyncSession = Depends(get_session)):
     guide = await load_guide(session, guide_id)
     profile = await session.get(StyleProfile, guide.current_version_id)

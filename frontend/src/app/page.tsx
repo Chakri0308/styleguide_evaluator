@@ -33,7 +33,7 @@ export default function HomePage() {
             Every brand rule, <em className="text-fg-muted">in focus.</em>
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-fg-muted">
-            StyleLens reads your style guide the way a design lead would — colours, type, logo, imagery and voice —
+            StyleLens reads your style guide the way a design lead would — colors, type, logo, imagery and voice —
             then checks any document against it and answers questions with sources you can click.
           </p>
         </motion.div>

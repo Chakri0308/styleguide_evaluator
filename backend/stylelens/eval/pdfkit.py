@@ -54,6 +54,7 @@ class PdfBuilder:
     def text(self, text: str, size: float = 10.5, font: str | None = None, color=None, indent: float = 0,
              leading: float = 1.45, width: float | None = None):
         font = font or self.body_font
+        text = text.replace("—", " - ").replace("’", "'").replace("“", '"').replace("”", '"')
         width = width or (PAGE_W - 2 * MARGIN - indent)
         lines = self._wrap(text, font, size, width)
         for ln in lines:
@@ -87,6 +88,7 @@ class PdfBuilder:
 
     def bullets(self, items: list[str], marker: str = "•"):
         for it in items:
+            it = it.replace("—", " - ")
             lines = self._wrap(it, self.body_font, 10.5, PAGE_W - 2 * MARGIN - 16)
             self.ensure(len(lines) * 15)
             self.page.insert_text((MARGIN, self.y + 10.5), marker, fontsize=10.5, fontname=self.body_font,

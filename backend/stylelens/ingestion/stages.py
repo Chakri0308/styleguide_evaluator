@@ -95,7 +95,21 @@ def _jsonable(meta: dict) -> dict:
 
 
 async def extract(version_id: str, r: StageReporter) -> None:
-    pass
+    from stylelens.db.models import StyleProfile as ProfileRow
+    from stylelens.extraction.profile import build_profile
+
+    async def progress(fraction: float, message: str) -> None:
+        await r.update("extracting", progress=fraction, message=message)
+
+    profile = await build_profile(version_id, progress)
+    async with SessionLocal() as session:
+        row = await session.get(ProfileRow, version_id)
+        data = profile.model_dump(mode="json")
+        if row is None:
+            session.add(ProfileRow(version_id=version_id, data=data))
+        else:
+            row.data = data
+        await session.commit()
 
 
 async def chunk(version_id: str, r: StageReporter) -> None:

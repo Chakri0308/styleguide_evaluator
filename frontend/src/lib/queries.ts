@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { api } from "./api";
+import { api, profileApi } from "./api";
 import type { Guide } from "./types";
 
 export const keys = {
@@ -67,5 +67,32 @@ export function useReingest() {
       qc.invalidateQueries({ queryKey: keys.guides });
       toast.success("Re-ingestion started", { description: `Building index version ${guide.current_version?.version}` });
     },
+  });
+}
+
+export function useProfile(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: [...keys.guide(id), "profile"],
+    queryFn: () => profileApi.profile(id),
+    enabled,
+    staleTime: 60_000,
+  });
+}
+
+export function usePages(id: string | undefined) {
+  return useQuery({
+    queryKey: ["guides", id, "pages"],
+    queryFn: () => profileApi.pages(id!),
+    enabled: !!id,
+    staleTime: 60_000,
+  });
+}
+
+export function useElements(id: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: ["guides", id, "elements"],
+    queryFn: () => profileApi.elements(id!),
+    enabled: !!id && enabled,
+    staleTime: 60_000,
   });
 }

@@ -4,6 +4,7 @@ import * as React from "react";
 import { ChatDock } from "@/components/chat/chat-dock";
 import { CommandPalette } from "@/components/shell/command-palette";
 import { Sidebar } from "@/components/shell/sidebar";
+import { SourceViewer } from "@/components/source/source-viewer";
 import { UploadDialog } from "@/components/upload/upload-dialog";
 import { UIStateProvider, useUIState } from "@/lib/ui-state";
 
@@ -50,6 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      <SourceViewer />
       <ChatDock />
       <UploadDialog />
       <CommandPalette />

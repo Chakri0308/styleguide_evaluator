@@ -44,3 +44,9 @@ export const api = {
   fileUrl: (id: string) => `${API_BASE}/guides/${id}/file`,
   assetUrl: (path: string) => `${API_BASE}${path}`,
 };
+
+export const profileApi = {
+  profile: (id: string) => request<import("./types").StyleProfile>(`/guides/${id}/profile`),
+  pages: (id: string) => request<import("./types").PageInfo[]>(`/guides/${id}/pages`),
+  elements: (id: string) => request<import("./types").ElementInfo[]>(`/guides/${id}/elements`),
+};

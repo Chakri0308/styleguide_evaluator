@@ -5,9 +5,18 @@ import * as React from "react";
 type Role = "reference" | "candidate";
 type SetBool = React.Dispatch<React.SetStateAction<boolean>>;
 
-export interface CitationTarget {
-  chunkId: string;
-  guideId?: string;
+/** A location in a guide to show in the source viewer (citation / extracted item click). */
+export interface SourceTarget {
+  guideId: string;
+  page: number;
+  bbox?: number[] | null;
+  /** Additional regions to highlight (multi-element citations). */
+  regions?: { page: number; bbox?: number[] | null }[];
+  elementId?: string;
+  elementIds?: string[];
+  chunkId?: string;
+  label?: string;
+  quote?: string;
 }
 
 interface UIState {
@@ -29,8 +38,8 @@ interface UIState {
   chatComparisonId: string | null;
   setChatComparisonId: (id: string | null) => void;
   /** Open the source viewer at a chunk (citation click). */
-  sourceTarget: CitationTarget | null;
-  openSource: (t: CitationTarget | null) => void;
+  sourceTarget: SourceTarget | null;
+  openSource: (t: SourceTarget | null) => void;
 }
 
 const Ctx = React.createContext<UIState | null>(null);
@@ -43,7 +52,7 @@ export function UIStateProvider({ children }: { children: React.ReactNode }) {
   const [uploadFile, setUploadFile] = React.useState<File | null>(null);
   const [chatGuideId, setChatGuideId] = React.useState<string | null>(null);
   const [chatComparisonId, setChatComparisonId] = React.useState<string | null>(null);
-  const [sourceTarget, setSourceTarget] = React.useState<CitationTarget | null>(null);
+  const [sourceTarget, setSourceTarget] = React.useState<SourceTarget | null>(null);
   const chatInput = React.useRef<HTMLTextAreaElement | null>(null);
 
   const value = React.useMemo<UIState>(

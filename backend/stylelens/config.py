@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore")
+    model_config = SettingsConfigDict(env_file=(".env", "../.env"), env_prefix="", extra="ignore")
 
     # Infrastructure
     database_url: str = "postgresql+asyncpg://stylelens:stylelens@localhost:5432/stylelens"
@@ -29,12 +29,14 @@ class Settings(BaseSettings):
 
     # LLM layer. Each role can be swapped independently ("provider:model").
     anthropic_api_key: str | None = None
-    llm_generation_model: str = "anthropic:claude-sonnet-5-5"
-    llm_extraction_model: str = "anthropic:claude-sonnet-5-5"
-    llm_vision_model: str = "anthropic:claude-sonnet-5-5"
-    llm_fast_model: str = "anthropic:claude-haiku-5-5"
-    llm_temperature: float = 0.0
-    llm_max_tokens: int = 4096
+    # Sampling parameters are intentionally absent: current Claude models only accept defaults, so
+    # consistency comes from the response cache and deterministic retrieval.
+    llm_generation_model: str = "anthropic:claude-opus-5-5"
+    llm_extraction_model: str = "anthropic:claude-opus-5-5"
+    llm_vision_model: str = "anthropic:claude-opus-5-5"
+    llm_fast_model: str = "anthropic:claude-opus-5-5"
+    # Server-side refusal fallback ("default" = Anthropic-recommended fallback model, "off" = disabled)
+    llm_refusal_fallback: str = "default"
 
     # Embeddings / reranking. "local:<hf model>" or "hash:<dim>" (deterministic, test-only).
     embedding_model: str = "local:BAAI/bge-m3"
