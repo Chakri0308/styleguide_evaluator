@@ -6,8 +6,8 @@ up:            ## Run the whole stack
 down:
 	docker compose down
 
-dev-infra:     ## Only Postgres + Redis + MinIO (for running api/web locally)
-	docker compose up -d postgres redis minio
+dev-infra:     ## Only Postgres + Redis (for running api/web locally)
+	docker compose up -d postgres redis
 
 migrate:
 	cd backend && alembic upgrade head

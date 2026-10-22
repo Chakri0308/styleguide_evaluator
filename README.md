@@ -51,7 +51,7 @@ checks plus an offline polarity/value judge. The UI marks these modes.
 ### Local development (without Docker)
 
 ```bash
-docker compose up -d postgres redis minio           # or bring your own Postgres 16 + pgvector, Redis
+docker compose up -d postgres redis                 # or bring your own Postgres 16 + pgvector, Redis
 python -m venv .venv && . .venv/bin/activate
 pip install -e "backend[dev,ml,ocr]"                # tesseract-ocr binary needed for OCR
 make migrate
@@ -77,7 +77,7 @@ flowchart LR
   W[arq worker]
   PG[(Postgres + pgvector<br/>FTS · HNSW)]
   RD[(Redis<br/>queue + pub/sub)]
-  S3[(MinIO / S3<br/>files, page renders, images)]
+  S3[(Object storage<br/>Docker volume or S3)]
   LLM[[Claude API]]
   ML[[bge-m3 · bge-reranker · CLIP]]
   UI -- /api --> R
@@ -122,7 +122,7 @@ All settings are environment variables (see `.env.example`):
 | `IMAGE_EMBEDDING_MODEL` | `local:clip-ViT-B-32` | Or `hist`, `none`; falls back to `hist` if CLIP can't load |
 | `RETRIEVAL_CANDIDATES` / `RERANK_TOP_K` / `RERANK_THRESHOLD` / `RRF_K` / `MULTI_QUERY` | 50 / 6 / reranker default / 60 / false | Retrieval tuning |
 | `DELTA_E_EXACT` / `DELTA_E_NEAR` | 1.0 / 3.0 | Colour match thresholds (CIEDE2000) |
-| `STORAGE_BACKEND` | `local` (`s3` in compose) | MinIO/S3 settings: `S3_*` |
+| `STORAGE_BACKEND` | `local` (a Docker volume in compose) | `s3` for S3 or any S3-compatible store; settings `S3_*` |
 | `JOB_MODE` | `arq` | `inline` runs jobs inside the API process |
 
 ## API

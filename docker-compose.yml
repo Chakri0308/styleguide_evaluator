@@ -7,19 +7,20 @@ x-backend: &backend
   environment:
     DATABASE_URL: postgresql+asyncpg://stylelens:stylelens@postgres:5432/stylelens
     REDIS_URL: redis://redis:6379/0
-    STORAGE_BACKEND: s3
-    S3_ENDPOINT_URL: http://minio:9000
+    # Uploaded files, page renders and images live in a shared Docker volume. To use S3 or another
+    # S3-compatible store instead, set STORAGE_BACKEND=s3 and the S3_* variables in .env.
+    STORAGE_BACKEND: ${STORAGE_BACKEND:-local}
+    STORAGE_LOCAL_ROOT: /data/objects
     PROMPTS_DIR: /app/prompts
     HF_HOME: /models
   volumes:
     - ./prompts:/app/prompts:ro
     - models:/models
+    - objects:/data/objects
   depends_on:
     postgres:
       condition: service_healthy
     redis:
-      condition: service_healthy
-    minio:
       condition: service_healthy
 
 services:
@@ -45,19 +46,6 @@ services:
       interval: 3s
       retries: 20
 
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    volumes:
-      - miniodata:/data
-    ports: ["9000:9000", "9001:9001"]
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 3s
-      retries: 20
 
   api:
     <<: *backend
@@ -87,5 +75,5 @@ services:
 
 volumes:
   pgdata:
-  miniodata:
+  objects:
   models:
