@@ -76,3 +76,16 @@ class PageOut(BaseModel):
     width: float
     height: float
     image_url: str | None
+
+
+class ElementOut(ORM):
+    id: str
+    seq: int
+    page: int
+    bbox: list[float] | None
+    type: str
+    heading_path: list[str]
+    level: int | None
+    text: str
+    meta: dict
+    image_key: str | None

@@ -77,6 +77,8 @@ class GuideVersion(TimestampMixin, Base):
     # Pinned model identifiers used to build this index (part of every cache key)
     embedding_model: Mapped[str | None] = mapped_column(String(200), nullable=True)
     parser: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    # Parser-level document metadata (body font size, embedded fonts, ...)
+    meta: Mapped[dict] = mapped_column(JSONB, default=dict, server_default="{}")
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     guide: Mapped[Guide] = relationship(back_populates="versions")

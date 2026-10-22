@@ -11,9 +11,9 @@ from sqlalchemy.orm import selectinload
 from sse_starlette.sse import EventSourceResponse
 
 from stylelens import events, jobs
-from stylelens.api.schemas import GuideOut, GuideVersionOut, IngestionStatus, PageOut
+from stylelens.api.schemas import ElementOut, GuideOut, GuideVersionOut, IngestionStatus, PageOut
 from stylelens.config import get_settings
-from stylelens.db.models import Guide, GuideVersion, Page, StyleProfile
+from stylelens.db.models import Element, Guide, GuideVersion, Page, StyleProfile
 from stylelens.db.session import SessionLocal, get_session
 from stylelens.formats import UnsupportedFormat, detect_format, mime_for
 from stylelens.storage import aget, aput
@@ -199,6 +199,16 @@ async def guide_pages(guide_id: str, session: AsyncSession = Depends(get_session
                 image_url=f"/assets/{p.image_key}" if p.image_key else None)
         for p in pages
     ]
+
+
+@router.get("/{guide_id}/elements", response_model=list[ElementOut])
+async def guide_elements(guide_id: str, page: int | None = None, session: AsyncSession = Depends(get_session)):
+    """Parsed layout elements of the current version (used by the text source viewer)."""
+    guide = await load_guide(session, guide_id)
+    stmt = select(Element).where(Element.version_id == guide.current_version_id).order_by(Element.seq)
+    if page is not None:
+        stmt = stmt.where(Element.page == page)
+    return list(await session.scalars(stmt))
 
 
 @router.get("/{guide_id}/profile")
