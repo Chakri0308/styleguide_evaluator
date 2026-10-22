@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
-from stylelens.api.routes import guides, search
+from stylelens.api.routes import chat, guides, search
 from stylelens.config import get_settings
 from stylelens.storage import aget
 
@@ -21,6 +21,7 @@ app.add_middleware(
 )
 app.include_router(guides.router)
 app.include_router(search.router)
+app.include_router(chat.router)
 
 
 @app.get("/health", tags=["meta"])

@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { ChatDock } from "@/components/chat/chat-dock";
+import { ChatDock, ChatSidePanel } from "@/components/chat/chat-dock";
 import { CommandPalette } from "@/components/shell/command-palette";
 import { Sidebar } from "@/components/shell/sidebar";
 import { SourceViewer } from "@/components/source/source-viewer";
 import { UploadDialog } from "@/components/upload/upload-dialog";
+import { ChatProvider } from "@/lib/chat";
 import { UIStateProvider, useUIState } from "@/lib/ui-state";
 
 function GlobalShortcuts() {
@@ -39,6 +40,7 @@ function GlobalShortcuts() {
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <UIStateProvider>
+      <ChatProvider>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:shadow-md"
@@ -50,12 +52,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main id="main" className="relative min-w-0 flex-1 overflow-hidden">
           {children}
         </main>
+        <ChatSidePanel />
       </div>
       <SourceViewer />
       <ChatDock />
       <UploadDialog />
       <CommandPalette />
       <GlobalShortcuts />
+      </ChatProvider>
     </UIStateProvider>
   );
 }

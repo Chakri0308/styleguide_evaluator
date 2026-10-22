@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip } from "@/components/ui/tooltip";
 import { contrast, onColor, rgbString, wcag } from "@/lib/color";
 import type { ColorItem } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { EmptyNote, ProfileSection } from "./section";
 import { SourceChip } from "./source-chip";
 
@@ -125,7 +124,7 @@ function ContrastPairs({ colors }: { colors: ColorItem[] }) {
         <h3 className="text-sm font-medium">Contrast pairs</h3>
         <span className="text-[12px] text-fg-subtle">WCAG 2.2 · normal text needs 4.5:1</span>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 @2xl:grid-cols-4">
         {visible.map(({ fg, bg, ratio }) => {
           const level = wcag(ratio);
           return (
@@ -166,7 +165,7 @@ export function ColorsSection({ colors, guideId }: { colors: ColorItem[]; guideI
         <EmptyNote>No colors were found in this document.</EmptyNote>
       ) : (
         <>
-          <div className={cn("grid gap-3", "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}>
+          <div className="grid grid-cols-1 gap-3 @lg:grid-cols-2 @3xl:grid-cols-3 @5xl:grid-cols-4">
             {approved.map((c, i) => (
               <Swatch key={c.id} c={c} guideId={guideId} index={i} />
             ))}
@@ -174,7 +173,7 @@ export function ColorsSection({ colors, guideId }: { colors: ColorItem[]; guideI
           {prohibited.length > 0 && (
             <div className="mt-6">
               <h3 className="mb-3 text-sm font-medium">Prohibited</h3>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 @lg:grid-cols-2 @3xl:grid-cols-3 @5xl:grid-cols-4">
                 {prohibited.map((c, i) => (
                   <Swatch key={c.id} c={c} guideId={guideId} index={i} />
                 ))}

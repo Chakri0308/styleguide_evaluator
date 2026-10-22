@@ -38,7 +38,7 @@ export function ProfileSkeleton() {
 export function ProfileView({ profile, guideId }: { profile: StyleProfile; guideId: string }) {
   const s = profile.stats;
   return (
-    <div className="flex flex-col gap-14">
+    <div className="@container flex flex-col gap-14">
       <div className="flex flex-col gap-3">
         {profile.title && <h2 className="font-display text-4xl leading-tight tracking-tight text-balance">{profile.title}</h2>}
         {profile.summary && <p className="max-w-3xl text-[15px] leading-relaxed text-fg-muted">{profile.summary}</p>}

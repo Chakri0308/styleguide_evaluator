@@ -151,7 +151,8 @@ export function SourceViewer() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 40, opacity: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 38 }}
-          className="fixed inset-y-0 right-0 z-30 flex w-[min(560px,100vw)] flex-col border-l border-border bg-surface-raised shadow-lg"
+          style={{ right: "var(--chat-side-width, 0px)" }}
+          className="fixed inset-y-0 z-30 flex w-[min(560px,100vw)] flex-col border-l border-border bg-surface-raised shadow-lg"
         >
           <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
             <div className="min-w-0 flex-1">

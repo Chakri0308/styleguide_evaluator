@@ -15,7 +15,7 @@ export function ImagesSection({ images, guideId }: { images: ImageItem[]; guideI
       {images.length === 0 ? (
         <EmptyNote>This document has no raster images.</EmptyNote>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 @lg:grid-cols-2 @3xl:grid-cols-3">
           {images.map((img) => (
             <article key={img.id} className="group overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
               <button
