@@ -109,6 +109,14 @@ function ThemeSwitch() {
 }
 
 export function Sidebar() {
+  return (
+    <nav aria-label="Library" className="hidden w-60 shrink-0 flex-col border-r border-border bg-bg-subtle md:flex">
+      <SidebarContent />
+    </nav>
+  );
+}
+
+export function SidebarContent() {
   const pathname = usePathname();
   const ui = useUIState();
   const { data: guides, isLoading } = useGuides();
@@ -117,10 +125,7 @@ export function Sidebar() {
   const cands = guides?.filter((g) => g.role === "candidate") ?? [];
 
   return (
-    <nav
-      aria-label="Library"
-      className="hidden w-60 shrink-0 flex-col border-r border-border bg-bg-subtle md:flex"
-    >
+    <>
       <div className="flex h-12 items-center gap-2 px-4">
         <Link href="/" className="flex items-center gap-2 rounded-md" aria-label="StyleLens home">
           <span className="relative grid size-6 place-items-center rounded-md bg-fg text-bg">
@@ -223,6 +228,6 @@ export function Sidebar() {
         </div>
         <ThemeSwitch />
       </div>
-    </nav>
+    </>
   );
 }

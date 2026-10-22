@@ -144,6 +144,10 @@ def _rules_in_chunks(ref: StyleProfile, ri: VersionIndex, chunk_ids: list[str]) 
     return [r for r in ref.all_rules() if any(s.element_id in els for s in r.source_refs)]
 
 
+def _shown(text: str) -> list[str]:
+    return list(dict.fromkeys(QUANTITY_RE.findall(text)))
+
+
 def _values(text: str) -> set[str]:
     return {re.sub(r"\s+", "", v.lower()) for v in QUANTITY_RE.findall(text)}
 
@@ -154,6 +158,7 @@ def judge_heuristic(aligned: list[Aligned], ref: StyleProfile, ri: VersionIndex,
     for a in aligned:
         u = a.unit
         if u.rule is None:
+            out += _asset_value_checks(a, ref, ri, ci, lex)
             continue
         cand_cite = ci.cite_chunk(u.chunk_id, u.text)
         if not cand_cite:
@@ -192,7 +197,7 @@ def judge_heuristic(aligned: list[Aligned], ref: StyleProfile, ri: VersionIndex,
             else:
                 out.append(FindingModel(
                     finding_id=fid("rule"), category=cat, status="deviation", severity="major",
-                    summary=f"Different value: candidate {', '.join(sorted(cv))} vs guide {', '.join(sorted(rv))}.",
+                    summary=f"Different value: candidate {', '.join(_shown(u.text))} vs guide {', '.join(_shown(best.statement))}.",
                     reasoning=f"“{u.text}” vs “{best.statement}”",
                     reference_citations=ref_cites, candidate_citations=[cand_cite], confidence=conf, method="heuristic"))
         elif u.rule.polarity != ref_pol:
@@ -208,6 +213,37 @@ def judge_heuristic(aligned: list[Aligned], ref: StyleProfile, ri: VersionIndex,
                 summary=f"Consistent with the guide: {best.statement}",
                 reference_citations=ref_cites, candidate_citations=[cand_cite], confidence=round(sim, 2),
                 method="heuristic"))
+    return out
+
+
+def _asset_value_checks(a: Aligned, ref: StyleProfile, ri: VersionIndex, ci: VersionIndex,
+                        lex: LexicalReranker) -> list[FindingModel]:
+    """Offline check for copy/assets: sentences stating a quantity that differs from the closest rule."""
+    from stylelens.chat.text import split_sentences
+
+    out = []
+    rules = [r for r in _rules_in_chunks(ref, ri, a.ref_chunk_ids) if _values(r.statement)]
+    if not rules:
+        return out
+    for sent in split_sentences(a.unit.text):
+        sv = _values(sent)
+        if not sv:
+            continue
+        scores = lex.score(sent, [r.statement for r in rules])
+        i = max(range(len(rules)), key=lambda k: (scores[k], -k))
+        best, sim = rules[i], scores[i]
+        rv = _values(best.statement)
+        if sim < 0.4 or sv & rv:
+            continue
+        ref_cites = ri.cite_refs([x.model_dump() for x in best.source_refs])
+        cand_cite = ci.cite_chunk(a.unit.chunk_id, sent)
+        if ref_cites and cand_cite:
+            out.append(FindingModel(
+                finding_id=fid("rule"), category=finding_category(best.category), status="deviation",
+                severity="major" if best.normative_level == "must" else "minor",
+                summary=f"States {', '.join(_shown(sent))} where the guide specifies {', '.join(_shown(best.statement))}.",
+                reasoning=f"“{sent.strip()}” vs “{best.statement}”", reference_citations=ref_cites,
+                candidate_citations=[cand_cite], confidence=round(0.4 + sim / 2, 2), method="heuristic"))
     return out
 
 

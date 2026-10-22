@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     embedding_model: str = "local:BAAI/bge-m3"
     embedding_dim: int = 1024
     reranker_model: str = "local:BAAI/bge-reranker-v2-m3"
+    # Image embeddings for visual logo/imagery comparison: "local:clip-ViT-B-32" (sentence-transformers
+    # CLIP), "hist" (deterministic Lab colour histogram, offline/tests) or "none".
+    image_embedding_model: str = "local:clip-ViT-B-32"
 
     # Retrieval tuning
     retrieval_candidates: int = 50

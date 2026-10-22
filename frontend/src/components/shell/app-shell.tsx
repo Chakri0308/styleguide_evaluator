@@ -3,6 +3,8 @@
 import * as React from "react";
 import { ChatDock, ChatSidePanel } from "@/components/chat/chat-dock";
 import { CommandPalette } from "@/components/shell/command-palette";
+import { MobileBar } from "@/components/shell/mobile-bar";
+import { ShortcutsDialog } from "@/components/shell/shortcuts-dialog";
 import { Sidebar } from "@/components/shell/sidebar";
 import { SourceViewer } from "@/components/source/source-viewer";
 import { UploadDialog } from "@/components/upload/upload-dialog";
@@ -25,6 +27,9 @@ function GlobalShortcuts() {
       } else if (mod && e.key.toLowerCase() === "u") {
         e.preventDefault();
         ui.openUpload("reference");
+      } else if (!typing && !mod && e.key === "?") {
+        e.preventDefault();
+        ui.setShortcutsOpen(true);
       } else if (!typing && !mod && e.key === "/") {
         e.preventDefault();
         ui.setChatOpen(true);
@@ -49,8 +54,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <div className="flex h-dvh overflow-hidden">
         <Sidebar />
-        <main id="main" className="relative min-w-0 flex-1 overflow-hidden">
-          {children}
+        <main id="main" className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+          <MobileBar />
+          <div className="relative min-h-0 flex-1">{children}</div>
         </main>
         <ChatSidePanel />
       </div>
@@ -58,6 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ChatDock />
       <UploadDialog />
       <CommandPalette />
+      <ShortcutsDialog />
       <GlobalShortcuts />
       </ChatProvider>
     </UIStateProvider>

@@ -45,8 +45,8 @@ def test_banned_patterns_from_reference_rules():
 def test_scoring():
     mk = lambda st, sev: FindingModel(finding_id="x", category="colors", status=st, severity=sev, summary="s")  # noqa: E731
     s = score([mk("compliant", "info"), mk("compliant", "info"), mk("deviation", "major")])
-    assert s["categories"]["colors"]["score"] == pytest.approx(40.0)
-    assert s["score"] == pytest.approx(40.0)
+    assert s["categories"]["colors"]["score"] == pytest.approx(50.0)  # (2 + 1 prior) / (3 + 3)
+    assert s["score"] == pytest.approx(50.0)
     assert score([])["score"] == 100.0
 
 
@@ -67,6 +67,8 @@ async def test_asset_comparison_end_to_end(client, pair):
     assert "best" in text or "unbelievable" in text or "world-class" in text                      # hype words
     assert "ordinal" in text or "1st" in text                                                     # date format
     assert any(x["category"] == "logo_rules" for x in f)                                          # logo on busy bg
+    visual = [x for x in f if x["method"] == "visual"]
+    assert any("don't" in x["summary"] for x in visual)  # image embedding matches the don't example
     # every finding cites real chunks
     for x in f:
         cites = x["reference_citations"] + x["candidate_citations"]

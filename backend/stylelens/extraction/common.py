@@ -48,7 +48,7 @@ DIRECTIVE_RE = re.compile(
     r"\b(must|never|always|should|do not|don't|avoid|use|keep|prefer|required|may|only|at least|no more than|"
     r"minimum|maximum|reserved|write|address|place|pair|set|apply|ensure|make sure|limit|spell out|capitali[sz]e)\b",
     re.I)
-QUANTITY_RE = re.compile(r"\d+(?:\.\d+)?\s?(?:px|pt|mm|cm|in|em|rem|%|:1|x)\b|\d+\s?(?:by|x|×)\s?\d+\s?px", re.I)
+QUANTITY_RE = re.compile(r"\d+\s?(?:by|x|×)\s?\d+\s?px|\d+(?:\.\d+)?\s?(?:px|pt|mm|cm|in|em|rem|%|:1|x)(?![A-Za-z0-9])", re.I)
 
 
 def normative_level(text: str) -> NormativeLevel:

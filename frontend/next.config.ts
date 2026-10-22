@@ -5,6 +5,8 @@ const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Lets a production build run next to `next dev` (NEXT_DIST_DIR=.next-build npm run build).
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // Keep SSE streams unbuffered through the proxy.
   compress: false,
   devIndicators: false,

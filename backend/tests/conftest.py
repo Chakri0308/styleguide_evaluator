@@ -7,6 +7,7 @@ os.environ["STORAGE_BACKEND"] = "local"
 os.environ["STORAGE_LOCAL_ROOT"] = tempfile.mkdtemp(prefix="stylelens-objects-")
 os.environ.setdefault("EMBEDDING_MODEL", "hash:1024")
 os.environ.setdefault("RERANKER_MODEL", "lexical")
+os.environ.setdefault("IMAGE_EMBEDDING_MODEL", "hist")
 os.environ.setdefault("LLM_GENERATION_MODEL", "fake:fake")
 # Extraction/vision use the heuristic path unless a test opts into the fake LLM explicitly.
 os.environ.setdefault("LLM_EXTRACTION_MODEL", "none:none")

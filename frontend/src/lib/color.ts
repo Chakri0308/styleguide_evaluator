@@ -29,7 +29,7 @@ export function wcag(ratio: number, large = false): "AAA" | "AA" | "AA Large" | 
 
 /** Readable text colour on top of a swatch. */
 export function onColor(hex: string) {
-  return contrast(hex, "#FFFFFF") >= contrast(hex, "#111111") ? "#FFFFFF" : "#111111";
+  return contrast(hex, "#FFFFFF") >= contrast(hex, "#000000") ? "#FFFFFF" : "#000000";
 }
 
 export function rgbString(hex: string) {

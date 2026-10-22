@@ -69,10 +69,11 @@ def score(findings: list[FindingModel]) -> dict:
             continue
         passes = sum(1.0 for f in fs if f.status == "compliant")
         fails = sum(SEVERITY_WEIGHT[f.severity] for f in fs if f.status != "compliant")
-        total_pass += passes
+        total_pass += passes + 1
         total_fail += fails
+        # +1 prior pass per category keeps sparse reports (one finding) from reading as total failure
         categories[cat] = {
-            "score": round(100 * passes / (passes + fails), 1) if passes + fails else 100.0,
+            "score": round(100 * (passes + 1) / (passes + 1 + fails), 1),
             "counts": dict(Counter(f.status for f in fs)),
             "total": len(fs),
         }
@@ -123,6 +124,7 @@ async def run_comparison(comparison_id: str) -> None:
         findings += det.check_typography(ref, cand, ri, ci)
         findings += det.check_phrases(ref, ri, ci)
         findings += det.check_logo_backgrounds(ref, cand, ri, ci)
+        findings += det.check_visual_examples(ref, cand, ri, ci)
         await r.update(stage, status="done", message=f"{len(findings)} findings from color, contrast, type and copy checks")
 
         stage = "judging"

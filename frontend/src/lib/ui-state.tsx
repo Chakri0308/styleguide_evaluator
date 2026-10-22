@@ -22,6 +22,10 @@ export interface SourceTarget {
 interface UIState {
   paletteOpen: boolean;
   setPaletteOpen: SetBool;
+  shortcutsOpen: boolean;
+  setShortcutsOpen: SetBool;
+  navOpen: boolean;
+  setNavOpen: SetBool;
   chatOpen: boolean;
   setChatOpen: SetBool;
   chatExpanded: boolean;
@@ -46,6 +50,8 @@ const Ctx = React.createContext<UIState | null>(null);
 
 export function UIStateProvider({ children }: { children: React.ReactNode }) {
   const [paletteOpen, setPaletteOpen] = React.useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = React.useState(false);
+  const [navOpen, setNavOpen] = React.useState(false);
   const [chatOpen, setChatOpen] = React.useState(false);
   const [chatExpanded, setChatExpanded] = React.useState(false);
   const [uploadRole, setUploadRole] = React.useState<Role | null>(null);
@@ -59,6 +65,10 @@ export function UIStateProvider({ children }: { children: React.ReactNode }) {
     () => ({
       paletteOpen,
       setPaletteOpen,
+      shortcutsOpen,
+      setShortcutsOpen,
+      navOpen,
+      setNavOpen,
       chatOpen,
       setChatOpen,
       chatExpanded,
@@ -84,7 +94,7 @@ export function UIStateProvider({ children }: { children: React.ReactNode }) {
       sourceTarget,
       openSource: setSourceTarget,
     }),
-    [paletteOpen, chatOpen, chatExpanded, uploadRole, uploadFile, chatGuideId, chatComparisonId, sourceTarget],
+    [paletteOpen, shortcutsOpen, navOpen, chatOpen, chatExpanded, uploadRole, uploadFile, chatGuideId, chatComparisonId, sourceTarget],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

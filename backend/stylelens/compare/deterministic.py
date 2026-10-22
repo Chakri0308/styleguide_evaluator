@@ -373,3 +373,44 @@ def check_logo_backgrounds(ref: StyleProfile, cand: StyleProfile, ri: VersionInd
                 reference_citations=ri.cite_refs(_refs(rule)), candidate_citations=[cite], confidence=0.6,
                 method="visual", data={"dominant_colors": cols, "spread": round(spread, 1)}))
     return out
+
+
+def check_visual_examples(ref: StyleProfile, cand: StyleProfile, ri: VersionIndex, ci: VersionIndex) -> list[FindingModel]:
+    """Compare candidate logo/imagery to the reference's do / don't example images by image embedding:
+    a candidate image that is clearly closer to a "don't" example than to any "do" example is flagged."""
+    import numpy as np
+
+    def vec(index: VersionIndex, element_id: str):
+        el = index.elements.get(element_id)
+        v = (el.meta or {}).get("image_embedding") if el else None
+        return np.asarray(v, dtype=np.float32) if v else None
+
+    examples = [(img, vec(ri, img.element_id)) for img in ref.images if img.example in ("do", "dont")]
+    examples = [(img, v) for img, v in examples if v is not None]
+    dont = [(i, v) for i, v in examples if i.example == "dont"]
+    do = [(i, v) for i, v in examples if i.example == "do"]
+    if not dont:
+        return []
+    out = []
+    for img in cand.images:
+        cv = vec(ci, img.element_id)
+        if cv is None:
+            continue
+        best_dont = max(dont, key=lambda t: float(cv @ t[1]))
+        s_dont = float(cv @ best_dont[1])
+        s_do = max((float(cv @ v) for _, v in do), default=0.0)
+        if s_dont >= 0.6 and s_dont - s_do >= 0.08 and best_dont[0].kind == img.kind or (
+                s_dont >= 0.75 and s_dont - s_do >= 0.1):
+            ref_cite = ri.cite_element(best_dont[0].element_id, best_dont[0].caption or best_dont[0].description)
+            cand_cite = ci.cite_element(img.element_id, img.caption or img.description)
+            if ref_cite and cand_cite:
+                out.append(FindingModel(
+                    finding_id=fid("visual"), category="logo_rules" if best_dont[0].kind == "logo" else "imagery_rules",
+                    status="deviation", severity="major",
+                    summary=f"This image closely resembles the guide's “don't” example: "
+                            f"{best_dont[0].caption or best_dont[0].description}",
+                    reasoning=f"Image-embedding similarity {s_dont:.2f} to the don't example vs {s_do:.2f} to the "
+                              "closest do example.",
+                    reference_citations=[ref_cite], candidate_citations=[cand_cite], confidence=round(min(0.9, s_dont), 2),
+                    method="visual", data={"similarity_dont": round(s_dont, 3), "similarity_do": round(s_do, 3)}))
+    return out

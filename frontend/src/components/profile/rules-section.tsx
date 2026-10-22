@@ -30,6 +30,7 @@ function RuleCard({ rule, guideId }: { rule: RuleItem; guideId: string }) {
           "mt-0.5 grid size-5 shrink-0 place-items-center rounded-full",
           dont ? "bg-bad-soft text-bad" : "bg-ok-soft text-ok",
         )}
+        role="img"
         aria-label={dont ? "Don't" : "Do"}
       >
         {dont ? <X className="size-3" strokeWidth={3} /> : <Check className="size-3" strokeWidth={3} />}

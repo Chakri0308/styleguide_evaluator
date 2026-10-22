@@ -106,3 +106,55 @@ def test_svg_parser():
     svg = b'<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><rect width="80" height="80" fill="#1B4F9C"/><text x="90" y="50" font-size="14">Harbor</text></svg>'
     doc = get_parser("svg").parse(svg, "logo.svg", noop_progress)
     assert any(e.type == "swatch" and e.meta["fill"] == "#1B4F9C" for e in doc.elements)
+
+
+def test_pptx_parser():
+    from pptx import Presentation
+    from pptx.dml.color import RGBColor
+    from pptx.enum.shapes import MSO_SHAPE
+    from pptx.util import Inches, Pt
+
+    prs = Presentation()
+    s = prs.slides.add_slide(prs.slide_layouts[1])
+    s.shapes.title.text = "Color palette"
+    body = s.placeholders[1].text_frame
+    body.text = "Primary is Harbor Blue #1B4F9C"
+    p = body.add_paragraph()
+    p.text = "Never use pure black"
+    p.level = 1
+    chip = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1), Inches(5), Inches(1), Inches(1))
+    chip.fill.solid()
+    chip.fill.fore_color.rgb = RGBColor(0x1B, 0x4F, 0x9C)
+    s2 = prs.slides.add_slide(prs.slide_layouts[5])
+    s2.shapes.title.text = "Type scale"
+    tbl = s2.shapes.add_table(2, 2, Inches(1), Inches(2), Inches(4), Inches(1)).table
+    tbl.cell(0, 0).text, tbl.cell(0, 1).text = "Style", "Typeface"
+    tbl.cell(1, 0).text, tbl.cell(1, 1).text = "H1", "Fraunces"
+    buf = io.BytesIO()
+    prs.save(buf)
+    doc = get_parser("pptx").parse(buf.getvalue(), "deck.pptx", noop_progress)
+    assert len(doc.pages) == 2
+    assert doc.elements[0].type == "heading" and doc.elements[0].text == "Color palette"
+    assert any(e.type == "swatch" and e.meta["fill"] == "#1B4F9C" for e in doc.elements)
+    assert any(e.type == "table" and "Fraunces" in e.text and e.page == 2 for e in doc.elements)
+    assert any("pure black" in e.text for e in doc.elements)
+    assert all(e.bbox for e in doc.elements if e.type != "paragraph" or not e.meta.get("speaker_notes"))
+
+
+def test_html_parser():
+    html = b"""<html><head><title>Acme Web Guide</title>
+    <style>:root{--brand:#0055FF} body{font-family: "Inter", sans-serif; color:#222}</style></head>
+    <body><h1>Voice</h1><p>We are <b>clear</b> and kind.</p><ul><li>Never use jargon.</li><li>Use "you".</li></ul>
+    <h2>Buttons</h2><table><tr><th>State</th><th>Color</th></tr><tr><td>Default</td><td>#0055FF</td></tr></table>
+    <img src="logo.png" alt="Acme logo on white"><script>var x = "#FF0000";</script></body></html>"""
+    doc = get_parser("html").parse(html, "guide.html", noop_progress)
+    assert doc.title == "Acme Web Guide"
+    types = [e.type for e in doc.elements]
+    assert types[:5] == ["heading", "paragraph", "list_item", "list_item", "heading"]
+    assert doc.elements[1].text == "We are clear and kind."
+    assert any(e.type == "table" and "#0055FF" in e.text for e in doc.elements)
+    css = [e.text for e in doc.elements if e.meta.get("css")]
+    assert any("Typeface: Inter" in c for c in css) and any("#0055FF" in c for c in css)
+    assert not any("#FF0000" in e.text for e in doc.elements)  # scripts ignored
+    paths = assign_heading_paths(doc.elements)
+    assert paths[-1] == ["Stylesheet typography and colors"]

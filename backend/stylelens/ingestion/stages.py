@@ -167,6 +167,24 @@ async def embed(version_id: str, r: StageReporter) -> None:
             await session.commit()
         await r.update("embedding", progress=min(1.0, (i + len(batch)) / max(len(rows), 1)),
                        message=f"{i + len(batch)} of {len(rows)} passages")
+    # Image embeddings (visual similarity) stored on the image elements
+    from stylelens.retrieval.image_models import get_image_embedder
+
+    img_embedder = await asyncio.to_thread(get_image_embedder)
+    if img_embedder is not None:
+        async with SessionLocal() as session:
+            imgs = list(await session.scalars(select(Element).where(
+                Element.version_id == version_id, Element.type == "image", Element.image_key.is_not(None))))
+        for el in imgs:
+            try:
+                vec = (await asyncio.to_thread(img_embedder.embed, [await aget(el.image_key)]))[0]
+            except Exception:  # noqa: BLE001 - unreadable image: skip
+                continue
+            async with SessionLocal() as session:
+                row = await session.get(Element, el.id)
+                row.meta = {**(row.meta or {}), "image_embedding": [round(float(x), 5) for x in vec],
+                            "image_embedding_model": img_embedder.name}
+                await session.commit()
     async with SessionLocal() as session:
         version = await session.get(GuideVersion, version_id)
         version.embedding_model = embedder.name

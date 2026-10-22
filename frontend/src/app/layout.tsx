@@ -12,6 +12,7 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-code", display: 
 export const metadata: Metadata = {
   title: "StyleLens",
   description: "Understand, compare and query brand style guides.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

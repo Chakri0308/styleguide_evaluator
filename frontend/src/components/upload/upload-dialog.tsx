@@ -57,14 +57,8 @@ export function DropZone({
   className?: string;
 }) {
   const [over, setOver] = React.useState(false);
-  const input = React.useRef<HTMLInputElement>(null);
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      aria-label="Choose a file to upload or drop it here"
-      onClick={() => input.current?.click()}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), input.current?.click())}
+    <label
       onDragOver={(e) => {
         e.preventDefault();
         setOver(true);
@@ -79,7 +73,7 @@ export function DropZone({
       }}
       className={cn(
         "group relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border-strong bg-surface-sunken/60 text-center transition-all duration-200",
-        "hover:border-accent/60 hover:bg-accent-soft/40",
+        "hover:border-accent/60 hover:bg-accent-soft/40 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-ring",
         over && "scale-[1.01] border-accent bg-accent-soft/60",
         compact ? "px-4 py-8" : "px-6 py-14",
         className,
@@ -98,18 +92,17 @@ export function DropZone({
         <p className="mt-1 text-xs text-fg-subtle">{FORMATS.join(" · ")} — up to 100 MB</p>
       </div>
       <input
-        ref={input}
         type="file"
         accept={ACCEPT}
+        aria-label="Choose a file to upload"
         className="sr-only"
-        tabIndex={-1}
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) onFile(f);
           e.target.value = "";
         }}
       />
-    </div>
+    </label>
   );
 }
 

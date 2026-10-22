@@ -57,10 +57,10 @@ function Swatch({ c, guideId, index }: { c: ColorItem; guideId: string; index: n
             style={{ background: `repeating-linear-gradient(135deg, transparent 0 10px, ${fg}22 10px 12px)` }}
           />
         )}
-        <span className="absolute bottom-2.5 left-3 font-mono text-[12px] opacity-80">{c.hex}</span>
+        <span className="absolute bottom-2.5 left-3 font-mono text-[12px]">{c.hex}</span>
         <span className="absolute right-2.5 top-2.5 flex gap-1">
           {c.role && (
-            <span className="rounded-full px-2 py-0.5 text-[10.5px] font-medium backdrop-blur" style={{ background: `${fg}1f` }}>
+            <span className="rounded-full px-2 py-0.5 text-[10.5px] font-medium" style={{ background: fg, color: c.hex }}>
               {c.role}
             </span>
           )}

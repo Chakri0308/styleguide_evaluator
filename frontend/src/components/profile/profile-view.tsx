@@ -42,33 +42,35 @@ export function ProfileView({ profile, guideId }: { profile: StyleProfile; guide
       <div className="flex flex-col gap-3">
         {profile.title && <h2 className="font-display text-4xl leading-tight tracking-tight text-balance">{profile.title}</h2>}
         {profile.summary && <p className="max-w-3xl text-[15px] leading-relaxed text-fg-muted">{profile.summary}</p>}
-        <dl className="mt-1 flex flex-wrap gap-x-6 gap-y-2 text-[13px]">
-          {(
-            [
-              ["Pages", s.pages],
-              ["Colors", s.colors],
-              ["Rules", s.rules],
-              ["Images", s.images],
-            ] as const
-          ).map(([k, v]) => (
-            <div key={k} className="flex items-baseline gap-1.5">
-              <dt className="text-fg-subtle">{k}</dt>
-              <dd className="font-mono tabular-nums text-fg">{v}</dd>
-            </div>
-          ))}
-          <div className="flex items-center gap-1.5 text-fg-subtle">
+        <div className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px]">
+          <dl className="flex flex-wrap gap-x-6 gap-y-2">
+            {(
+              [
+                ["Pages", s.pages],
+                ["Colors", s.colors],
+                ["Rules", s.rules],
+                ["Images", s.images],
+              ] as const
+            ).map(([k, v]) => (
+              <div key={k} className="flex items-baseline gap-1.5">
+                <dt className="text-fg-subtle">{k}</dt>
+                <dd className="font-mono tabular-nums text-fg">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <span className="flex items-center gap-1.5 text-fg-subtle">
             <Sparkles className="size-3.5" />
             {s.llm_used ? `Extracted with ${s.extraction_model?.split(":")[1] ?? "LLM"}` : "Heuristic extraction"}
-          </div>
+          </span>
           {s.warnings.length > 0 && (
             <Tooltip content={<ul className="list-disc pl-3">{s.warnings.slice(0, 6).map((w) => <li key={w}>{w}</li>)}</ul>}>
-              <span className="flex items-center gap-1.5 text-warn">
+              <span tabIndex={0} className="flex items-center gap-1.5 rounded text-warn">
                 <AlertTriangle className="size-3.5" />
                 {s.warnings.length} note{s.warnings.length === 1 ? "" : "s"}
               </span>
             </Tooltip>
           )}
-        </dl>
+        </div>
       </div>
       <ColorsSection colors={profile.colors} guideId={guideId} />
       <TypographySection items={profile.typography} fonts={profile.fonts_detected} guideId={guideId} />

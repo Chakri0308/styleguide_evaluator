@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight, Download, FileJson, MessageSquareText, Trash2 } from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { ArrowRight, Download, FileJson, ListFilter, MessageSquareText, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -150,6 +151,7 @@ export default function ComparisonPage() {
   const [tab, setTab] = React.useState("report");
   const [selected, setSelected] = React.useState<string | null>(null);
   const [filters, setFilters] = React.useState<FindingFilters>(DEFAULT_FILTERS);
+  const [drawer, setDrawer] = React.useState(false);
 
   React.useEffect(() => {
     if (snapshot?.status === "ready" && c?.status !== "ready") void refetch();
@@ -196,6 +198,23 @@ export default function ComparisonPage() {
     void chat.send(c.reference.id, `Why was this flagged: “${f.summary}”?`, c.id);
   };
 
+  const panel = c && ready ? (
+    <FindingsPanel
+      comparison={c}
+      filters={filters}
+      setFilters={setFilters}
+      selectedId={selected}
+      onSelect={setSelected}
+      onOpenCitation={openCitation}
+      onAsk={ask}
+      onShowSideBySide={(f) => {
+        setSelected(f.id);
+        setTab("side");
+        setDrawer(false);
+      }}
+    />
+  ) : null;
+
   return (
     <div className="flex h-full min-h-0">
       <div className="flex min-w-0 flex-1 flex-col">
@@ -217,6 +236,9 @@ export default function ComparisonPage() {
               <div className="ml-auto flex items-center gap-1">
                 {ready && (
                   <>
+                    <Button variant="secondary" size="sm" className="lg:hidden" onClick={() => setDrawer(true)}>
+                      <ListFilter /> Findings
+                    </Button>
                     <Tooltip content="Ask about this comparison">
                       <Button variant="ghost" size="icon-sm" aria-label="Ask about this comparison" onClick={() => (ui.setChatOpen(true), ui.focusChat())}>
                         <MessageSquareText />
@@ -289,21 +311,21 @@ export default function ComparisonPage() {
 
       {c && ready && (
         <aside aria-label="Findings" className={cn("hidden w-[380px] shrink-0 border-l border-border bg-bg-subtle lg:block")}>
-          <FindingsPanel
-            comparison={c}
-            filters={filters}
-            setFilters={setFilters}
-            selectedId={selected}
-            onSelect={setSelected}
-            onOpenCitation={openCitation}
-            onAsk={ask}
-            onShowSideBySide={(f) => {
-              setSelected(f.id);
-              setTab("side");
-            }}
-          />
+          {panel}
         </aside>
       )}
+      <DialogPrimitive.Root open={drawer} onOpenChange={setDrawer}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/30 lg:hidden" />
+          <DialogPrimitive.Content
+            aria-describedby={undefined}
+            className="fixed inset-y-0 right-0 z-50 w-[min(400px,92vw)] border-l border-border bg-bg-subtle shadow-lg lg:hidden"
+          >
+            <DialogPrimitive.Title className="sr-only">Findings</DialogPrimitive.Title>
+            {panel}
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
     </div>
   );
 }
