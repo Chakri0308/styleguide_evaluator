@@ -10,6 +10,7 @@ RERANKER_MODEL:   "local:<hf id>"  cross-encoder (default BAAI/bge-reranker-v2-m
 import asyncio
 import hashlib
 import math
+import os
 import re
 import threading
 from functools import lru_cache
@@ -110,8 +111,18 @@ class LexicalReranker:
             pt = {_stem(t) for t in tokens(p)}
 
             def match(t: str) -> bool:
-                # exact stem, or a shared prefix of >= 5 chars ("small" ~ "smaller", "colour" ~ "colours")
-                return t in pt or (len(t) >= 5 and any(x.startswith(t) or (len(x) >= 5 and t.startswith(x)) for x in pt))
+                # exact stem, or a long shared prefix ("small"~"smaller", "photography"~"photographic")
+                if t in pt:
+                    return True
+                if len(t) < 4:
+                    return False
+                for x in pt:
+                    if len(x) < 4:
+                        continue
+                    n = len(os.path.commonprefix((t, x)))
+                    if n >= max(4, 0.75 * min(len(t), len(x))):
+                        return True
+                return False
 
             hit = sum(1 + min(len(t), 10) / 10 for t in q if match(t))
             total = sum(1 + min(len(t), 10) / 10 for t in q)

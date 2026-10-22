@@ -149,7 +149,7 @@
   },
   {
    "id": "cmp-orange-bg",
-   "category": "color_usage",
+   "category": "colors",
    "status": [
     "conflict",
     "deviation",
@@ -191,6 +191,28 @@
    "keywords": [
     "WCAG",
     "44"
+   ]
+  },
+  {
+   "id": "cmp-missing-ember",
+   "category": "colors",
+   "status": [
+    "missing"
+   ],
+   "keywords": [
+    "Ember"
+   ]
+  },
+  {
+   "id": "cmp-gray-offpalette",
+   "category": "colors",
+   "status": [
+    "conflict",
+    "new",
+    "deviation"
+   ],
+   "keywords": [
+    "#A0A0A0"
    ]
   }
  ]

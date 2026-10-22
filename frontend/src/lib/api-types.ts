@@ -140,7 +140,7 @@ export interface paths {
         };
         /**
          * Guide Elements
-         * @description Parsed layout elements of the current version (used by the text source viewer).
+         * @description Parsed layout elements of a version (default: current) — used by the text source viewer.
          */
         get: operations["guide_elements_guides__guide_id__elements_get"];
         put?: never;
@@ -160,6 +160,187 @@ export interface paths {
         };
         /** Guide Profile */
         get: operations["guide_profile_guides__guide_id__profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/chunks/{chunk_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Chunk
+         * @description Citation preview: text, page, regions and heading path for a chunk.
+         */
+        get: operations["get_chunk_chunks__chunk_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Search
+         * @description Hybrid search over ready guides (all of them, or the given ones).
+         */
+        post: operations["search_search_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Chat
+         * @description Streams Server-Sent Events: status, sources, token…, citations, followups, done (or error).
+         */
+        post: operations["chat_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Conversations */
+        get: operations["conversations_conversations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/conversations/{conversation_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Conversation Messages */
+        get: operations["conversation_messages_conversations__conversation_id__messages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/messages/{message_id}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Feedback */
+        post: operations["feedback_messages__message_id__feedback_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/comparisons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Comparisons */
+        get: operations["list_comparisons_comparisons_get"];
+        put?: never;
+        /** Create Comparison */
+        post: operations["create_comparison_comparisons_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/comparisons/{comparison_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Comparison */
+        get: operations["get_comparison_comparisons__comparison_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Comparison */
+        delete: operations["delete_comparison_comparisons__comparison_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/comparisons/{comparison_id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Comparison Events */
+        get: operations["comparison_events_comparisons__comparison_id__events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/comparisons/{comparison_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Comparison */
+        get: operations["export_comparison_comparisons__comparison_id__export_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -221,6 +402,60 @@ export interface components {
             /** Name */
             name?: string | null;
         };
+        /** ChatIn */
+        ChatIn: {
+            /** Guide Id */
+            guide_id: string;
+            /** Message */
+            message: string;
+            /** Conversation Id */
+            conversation_id?: string | null;
+            /** Comparison Id */
+            comparison_id?: string | null;
+        };
+        /** ChunkOut */
+        ChunkOut: {
+            /** Id */
+            id: string;
+            /** Guide Id */
+            guide_id: string;
+            /** Version Id */
+            version_id: string;
+            /** Kind */
+            kind: string;
+            /** Text */
+            text: string;
+            /** Heading Path */
+            heading_path: string[];
+            /** Page Start */
+            page_start: number;
+            /** Page End */
+            page_end: number;
+            /** Regions */
+            regions: components["schemas"]["Region"][];
+            /** Image Url */
+            image_url?: string | null;
+            /** Parent Id */
+            parent_id?: string | null;
+        };
+        /** CitationRef */
+        CitationRef: {
+            /** Chunk Id */
+            chunk_id: string;
+            /** Page */
+            page: number;
+            /**
+             * Quote
+             * @default
+             */
+            quote: string;
+            /** Element Id */
+            element_id?: string | null;
+            /** Bbox */
+            bbox?: number[] | null;
+            /** Version Id */
+            version_id?: string | null;
+        };
         /** ColorItem */
         ColorItem: {
             /** Id */
@@ -262,6 +497,77 @@ export interface components {
             /** Source Refs */
             source_refs: components["schemas"]["SourceRef"][];
         };
+        /** CompareIn */
+        CompareIn: {
+            /** Reference Id */
+            reference_id: string;
+            /** Candidate Id */
+            candidate_id: string;
+        };
+        /** ComparisonListItem */
+        ComparisonListItem: {
+            /** Id */
+            id: string;
+            /** Status */
+            status: string;
+            /** Score */
+            score: number | null;
+            /** Reference Name */
+            reference_name: string;
+            /** Candidate Name */
+            candidate_name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** ComparisonOut */
+        ComparisonOut: {
+            /** Id */
+            id: string;
+            /** Status */
+            status: string;
+            /** Stages */
+            stages: {
+                [key: string]: unknown;
+            };
+            /** Score */
+            score: number | null;
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            };
+            /** Error */
+            error: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            reference: components["schemas"]["GuideRef"];
+            candidate: components["schemas"]["GuideRef"];
+            /** Findings */
+            findings: components["schemas"]["FindingOut"][];
+        };
+        /** ConversationOut */
+        ConversationOut: {
+            /** Id */
+            id: string;
+            /** Guide Id */
+            guide_id: string;
+            /** Comparison Id */
+            comparison_id: string | null;
+            /** Title */
+            title: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** ElementOut */
         ElementOut: {
             /** Id */
@@ -286,6 +592,42 @@ export interface components {
             };
             /** Image Key */
             image_key: string | null;
+        };
+        /** FeedbackIn */
+        FeedbackIn: {
+            /** Rating */
+            rating: number;
+            /** Comment */
+            comment?: string | null;
+        };
+        /** FindingOut */
+        FindingOut: {
+            /** Id */
+            id: string;
+            /** Finding Id */
+            finding_id: string;
+            /** Category */
+            category: string;
+            /** Status */
+            status: string;
+            /** Severity */
+            severity: string;
+            /** Method */
+            method: string;
+            /** Summary */
+            summary: string;
+            /** Reasoning */
+            reasoning: string;
+            /** Reference Citations */
+            reference_citations: components["schemas"]["CitationRef"][];
+            /** Candidate Citations */
+            candidate_citations: components["schemas"]["CitationRef"][];
+            /** Confidence */
+            confidence: number;
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
         };
         /** FontUsage */
         FontUsage: {
@@ -335,6 +677,19 @@ export interface components {
             /** Current Version Id */
             current_version_id: string | null;
             current_version: components["schemas"]["GuideVersionOut"] | null;
+        };
+        /** GuideRef */
+        GuideRef: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Version Id */
+            version_id: string;
+            /** Version */
+            version: number;
+            /** Format */
+            format: string;
         };
         /** GuideVersionOut */
         GuideVersionOut: {
@@ -426,6 +781,28 @@ export interface components {
             /** Error */
             error: string | null;
         };
+        /** MessageOut */
+        MessageOut: {
+            /** Id */
+            id: string;
+            /** Role */
+            role: string;
+            /** Content */
+            content: string;
+            /** Citations */
+            citations: {
+                [key: string]: unknown;
+            }[];
+            /** Meta */
+            meta: {
+                [key: string]: unknown;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** PageOut */
         PageOut: {
             /** Page */
@@ -474,6 +851,13 @@ export interface components {
             /** Warnings */
             warnings: string[];
         };
+        /** Region */
+        Region: {
+            /** Page */
+            page: number;
+            /** Bbox */
+            bbox?: number[] | null;
+        };
         /** RuleItem */
         RuleItem: {
             /** Id */
@@ -503,6 +887,57 @@ export interface components {
             normative_level: "must" | "should" | "may";
             /** Source Refs */
             source_refs: components["schemas"]["SourceRef"][];
+        };
+        /** SearchHit */
+        SearchHit: {
+            /** N */
+            n: number;
+            /** Chunk Id */
+            chunk_id: string;
+            /** Guide Id */
+            guide_id: string;
+            /** Guide Name */
+            guide_name: string;
+            /** Kind */
+            kind: string;
+            /** Page */
+            page: number;
+            /** Heading Path */
+            heading_path: string[];
+            /** Snippet */
+            snippet: string;
+            /** Score */
+            score: number;
+            /** Regions */
+            regions: {
+                [key: string]: unknown;
+            }[];
+            /** Element Ids */
+            element_ids: string[];
+        };
+        /** SearchRequest */
+        SearchRequest: {
+            /** Query */
+            query: string;
+            /** Guide Ids */
+            guide_ids?: string[] | null;
+            /** Top K */
+            top_k?: number | null;
+        };
+        /** SearchResponse */
+        SearchResponse: {
+            /** Query */
+            query: string;
+            /** Standalone Query */
+            standalone_query: string;
+            /** Intent */
+            intent: string | null;
+            /** Covered */
+            covered: boolean;
+            /** Candidates */
+            candidates: number;
+            /** Hits */
+            hits: components["schemas"]["SearchHit"][];
         };
         /** SourceRef */
         SourceRef: {
@@ -888,7 +1323,9 @@ export interface operations {
     };
     guide_pages_guides__guide_id__pages_get: {
         parameters: {
-            query?: never;
+            query?: {
+                version_id?: string | null;
+            };
             header?: never;
             path: {
                 guide_id: string;
@@ -921,6 +1358,7 @@ export interface operations {
         parameters: {
             query?: {
                 page?: number | null;
+                version_id?: string | null;
             };
             header?: never;
             path: {
@@ -968,6 +1406,375 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StyleProfile"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_chunk_chunks__chunk_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                chunk_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChunkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_search_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    chat_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    conversations_conversations_get: {
+        parameters: {
+            query?: {
+                guide_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    conversation_messages_conversations__conversation_id__messages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    feedback_messages__message_id__feedback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeedbackIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_comparisons_comparisons_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComparisonListItem"][];
+                };
+            };
+        };
+    };
+    create_comparison_comparisons_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompareIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComparisonOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_comparison_comparisons__comparison_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comparison_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComparisonOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_comparison_comparisons__comparison_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comparison_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    comparison_events_comparisons__comparison_id__events_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comparison_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_comparison_comparisons__comparison_id__export_get: {
+        parameters: {
+            query?: {
+                format?: string;
+            };
+            header?: never;
+            path: {
+                comparison_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

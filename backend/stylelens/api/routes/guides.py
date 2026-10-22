@@ -189,11 +189,19 @@ async def guide_file(guide_id: str, session: AsyncSession = Depends(get_session)
     )
 
 
+def _version_of(guide: Guide, version_id: str | None) -> str | None:
+    if version_id is None:
+        return guide.current_version_id
+    if not any(v.id == version_id for v in guide.versions):
+        raise HTTPException(404, "Version not found for this guide")
+    return version_id
+
+
 @router.get("/{guide_id}/pages", response_model=list[PageOut])
-async def guide_pages(guide_id: str, session: AsyncSession = Depends(get_session)):
+async def guide_pages(guide_id: str, version_id: str | None = None, session: AsyncSession = Depends(get_session)):
     guide = await load_guide(session, guide_id)
     pages = await session.scalars(
-        select(Page).where(Page.version_id == guide.current_version_id).order_by(Page.page)
+        select(Page).where(Page.version_id == _version_of(guide, version_id)).order_by(Page.page)
     )
     return [
         PageOut(page=p.page, width=p.width, height=p.height,
@@ -203,10 +211,11 @@ async def guide_pages(guide_id: str, session: AsyncSession = Depends(get_session
 
 
 @router.get("/{guide_id}/elements", response_model=list[ElementOut])
-async def guide_elements(guide_id: str, page: int | None = None, session: AsyncSession = Depends(get_session)):
-    """Parsed layout elements of the current version (used by the text source viewer)."""
+async def guide_elements(guide_id: str, page: int | None = None, version_id: str | None = None,
+                         session: AsyncSession = Depends(get_session)):
+    """Parsed layout elements of a version (default: current) — used by the text source viewer."""
     guide = await load_guide(session, guide_id)
-    stmt = select(Element).where(Element.version_id == guide.current_version_id).order_by(Element.seq)
+    stmt = select(Element).where(Element.version_id == _version_of(guide, version_id)).order_by(Element.seq)
     if page is not None:
         stmt = stmt.where(Element.page == page)
     return list(await session.scalars(stmt))

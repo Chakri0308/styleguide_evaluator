@@ -7,7 +7,7 @@ from stylelens.worker import tasks
 
 
 class WorkerSettings:
-    functions = [tasks.ingest_guide]
+    functions = [tasks.ingest_guide, tasks.compare_guides]
     redis_settings = RedisSettings.from_dsn(get_settings().redis_url)
     max_jobs = 4
     job_timeout = 60 * 60

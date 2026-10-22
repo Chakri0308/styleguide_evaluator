@@ -70,7 +70,11 @@ def test_heuristic_rules(northwind):
     assert all(r.source_refs and r.source_refs[0].page >= 1 for r in rules)
 
 
-async def test_profile_via_llm_path_drops_uncited_rules(client):
+async def test_profile_via_llm_path_drops_uncited_rules(client, monkeypatch):
+    from stylelens.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "llm_extraction_model", "fake:fake")
+
     @fake_provider.register("extract_rules")
     def _(meta, messages):
         text = messages[0]["content"][-1]["text"]

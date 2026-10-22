@@ -47,6 +47,8 @@ export const api = {
 
 export const profileApi = {
   profile: (id: string) => request<import("./types").StyleProfile>(`/guides/${id}/profile`),
-  pages: (id: string) => request<import("./types").PageInfo[]>(`/guides/${id}/pages`),
-  elements: (id: string) => request<import("./types").ElementInfo[]>(`/guides/${id}/elements`),
+  pages: (id: string, versionId?: string) =>
+    request<import("./types").PageInfo[]>(`/guides/${id}/pages${versionId ? `?version_id=${versionId}` : ""}`),
+  elements: (id: string, versionId?: string) =>
+    request<import("./types").ElementInfo[]>(`/guides/${id}/elements${versionId ? `?version_id=${versionId}` : ""}`),
 };

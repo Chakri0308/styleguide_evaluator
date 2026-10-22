@@ -33,3 +33,24 @@ export const RULE_CATEGORIES = [
   ["misc_rules", "Other"],
 ] as const;
 export type RuleCategory = (typeof RULE_CATEGORIES)[number][0];
+
+export type Comparison = S["ComparisonOut"];
+export type FindingT = S["FindingOut"];
+export type CitationRefT = S["CitationRef"];
+export type ComparisonListItem = S["ComparisonListItem"];
+
+export const COMPARE_STAGES = ["aligning", "deterministic_checks", "judging", "scoring"] as const;
+export const FINDING_STATUSES = ["conflict", "deviation", "missing", "new", "compliant"] as const;
+export const SEVERITIES = ["critical", "major", "minor", "info"] as const;
+export const FINDING_CATEGORIES: Record<string, string> = {
+  colors: "Color",
+  typography: "Typography",
+  logo_rules: "Logo",
+  imagery_rules: "Imagery",
+  voice_tone: "Voice & tone",
+  writing_rules: "Writing",
+  accessibility: "Accessibility",
+  components: "Components",
+  spacing_grid: "Spacing & grid",
+  misc_rules: "Other",
+};

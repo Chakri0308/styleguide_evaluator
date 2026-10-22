@@ -18,9 +18,9 @@ const LABELS: Record<string, string> = {
   indexing: "Indexing",
 };
 
-interface Snapshot {
+export interface Snapshot {
   status: string;
-  stages: Record<string, Stage>;
+  stages: Record<string, Pick<Stage, "status" | "progress" | "message">>;
   error?: string | null;
 }
 
@@ -59,14 +59,27 @@ export function useIngestionStream(guide: Guide | undefined) {
 }
 
 export function IngestionProgress({ snapshot }: { snapshot: Snapshot }) {
-  const overall =
-    INGEST_STAGES.reduce((acc, s) => acc + (snapshot.stages[s]?.progress ?? 0), 0) / INGEST_STAGES.length;
+  return <StageProgress snapshot={snapshot} stages={INGEST_STAGES} labels={LABELS} title="Analyzing document" />;
+}
+
+export function StageProgress({
+  snapshot,
+  stages,
+  labels,
+  title,
+}: {
+  snapshot: Snapshot;
+  stages: readonly string[];
+  labels: Record<string, string>;
+  title: string;
+}) {
+  const overall = stages.reduce((acc, s) => acc + (snapshot.stages[s]?.progress ?? 0), 0) / stages.length;
 
   return (
     <div className="rounded-xl border border-border bg-surface p-5 shadow-sm" aria-live="polite">
       <div className="flex items-baseline justify-between">
         <h2 className="text-sm font-medium">
-          {snapshot.status === "failed" ? "Ingestion failed" : "Analyzing document"}
+          {snapshot.status === "failed" ? "Something went wrong" : title}
         </h2>
         <span className="font-mono text-xs tabular-nums text-fg-subtle">{Math.round(overall * 100)}%</span>
       </div>
@@ -77,8 +90,8 @@ export function IngestionProgress({ snapshot }: { snapshot: Snapshot }) {
           animate={{ width: `${Math.max(overall * 100, 2)}%` }}
         />
       </div>
-      <ol className="mt-5 grid grid-cols-5 gap-2">
-        {INGEST_STAGES.map((name) => {
+      <ol className="mt-5 grid gap-2" style={{ gridTemplateColumns: `repeat(${stages.length}, minmax(0, 1fr))` }}>
+        {stages.map((name) => {
           const st = snapshot.stages[name] ?? { status: "pending", progress: 0, message: "" };
           return (
             <li key={name} className="min-w-0">
@@ -103,7 +116,7 @@ export function IngestionProgress({ snapshot }: { snapshot: Snapshot }) {
                   )}
                 </span>
                 <span className={cn("truncate text-[13px]", st.status === "pending" ? "text-fg-subtle" : "text-fg")}>
-                  {LABELS[name]}
+                  {labels[name] ?? name}
                 </span>
               </div>
               <p className="mt-1 line-clamp-2 min-h-8 pl-[26px] text-[11px] leading-4 text-fg-subtle">

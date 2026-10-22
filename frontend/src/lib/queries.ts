@@ -79,19 +79,19 @@ export function useProfile(id: string, enabled: boolean) {
   });
 }
 
-export function usePages(id: string | undefined) {
+export function usePages(id: string | undefined, versionId?: string) {
   return useQuery({
-    queryKey: ["guides", id, "pages"],
-    queryFn: () => profileApi.pages(id!),
+    queryKey: ["guides", id, "pages", versionId ?? "current"],
+    queryFn: () => profileApi.pages(id!, versionId),
     enabled: !!id,
     staleTime: 60_000,
   });
 }
 
-export function useElements(id: string | undefined, enabled = true) {
+export function useElements(id: string | undefined, enabled = true, versionId?: string) {
   return useQuery({
-    queryKey: ["guides", id, "elements"],
-    queryFn: () => profileApi.elements(id!),
+    queryKey: ["guides", id, "elements", versionId ?? "current"],
+    queryFn: () => profileApi.elements(id!, versionId),
     enabled: !!id && enabled,
     staleTime: 60_000,
   });
