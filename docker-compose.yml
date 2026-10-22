@@ -1,0 +1,91 @@
+name: stylelens
+
+x-backend: &backend
+  build:
+    context: ./backend
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+asyncpg://stylelens:stylelens@postgres:5432/stylelens
+    REDIS_URL: redis://redis:6379/0
+    STORAGE_BACKEND: s3
+    S3_ENDPOINT_URL: http://minio:9000
+    PROMPTS_DIR: /app/prompts
+    HF_HOME: /models
+  volumes:
+    - ./prompts:/app/prompts:ro
+    - models:/models
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    minio:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: stylelens
+      POSTGRES_PASSWORD: stylelens
+      POSTGRES_DB: stylelens
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stylelens"]
+      interval: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - miniodata:/data
+    ports: ["9000:9000", "9001:9001"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 3s
+      retries: 20
+
+  api:
+    <<: *backend
+    command: sh -c "alembic upgrade head && uvicorn stylelens.api.main:app --host 0.0.0.0 --port 8000"
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      retries: 30
+
+  worker:
+    <<: *backend
+    command: arq stylelens.worker.settings.WorkerSettings
+    depends_on:
+      api:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+    environment:
+      API_URL: http://api:8000
+    ports: ["3000:3000"]
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  miniodata:
+  models:

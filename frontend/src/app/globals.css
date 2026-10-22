@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * StyleLens design tokens.
+ * Neutral, slightly warm greys with one accent ("Lens blue"). Semantic colours are used only for
+ * compliance status. All text/background pairs below meet WCAG AA.
+ */
+:root {
+  --bg: oklch(0.985 0.002 90);
+  --bg-subtle: oklch(0.967 0.003 90);
+  --surface: oklch(1 0 0);
+  --surface-raised: oklch(1 0 0);
+  --surface-sunken: oklch(0.955 0.003 90);
+  --border: oklch(0.91 0.004 90);
+  --border-strong: oklch(0.85 0.005 90);
+  --fg: oklch(0.2 0.006 270);
+  --fg-muted: oklch(0.45 0.008 270);
+  --fg-subtle: oklch(0.56 0.008 270);
+  --accent: oklch(0.52 0.21 266);
+  --accent-hover: oklch(0.47 0.21 266);
+  --accent-fg: oklch(0.99 0 0);
+  --accent-soft: oklch(0.95 0.035 266);
+  --accent-soft-fg: oklch(0.42 0.18 266);
+  --ring: oklch(0.6 0.19 266 / 0.55);
+
+  --ok: oklch(0.52 0.13 155);
+  --ok-soft: oklch(0.95 0.04 155);
+  --warn: oklch(0.55 0.13 70);
+  --warn-soft: oklch(0.96 0.05 85);
+  --bad: oklch(0.53 0.2 25);
+  --bad-soft: oklch(0.96 0.03 25);
+  --info: oklch(0.5 0.12 230);
+  --info-soft: oklch(0.95 0.03 230);
+  --new: oklch(0.5 0.16 300);
+  --new-soft: oklch(0.95 0.035 300);
+
+  --highlight: oklch(0.88 0.15 95 / 0.45);
+  --highlight-strong: oklch(0.8 0.17 85 / 0.6);
+
+  --shadow-sm: 0 1px 2px oklch(0.2 0.01 270 / 0.06);
+  --shadow-md: 0 1px 2px oklch(0.2 0.01 270 / 0.05), 0 4px 12px -2px oklch(0.2 0.01 270 / 0.08);
+  --shadow-lg: 0 2px 4px oklch(0.2 0.01 270 / 0.04), 0 16px 40px -8px oklch(0.2 0.01 270 / 0.18);
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: oklch(0.165 0.004 270);
+  --bg-subtle: oklch(0.19 0.005 270);
+  --surface: oklch(0.205 0.005 270);
+  --surface-raised: oklch(0.235 0.006 270);
+  --surface-sunken: oklch(0.15 0.004 270);
+  --border: oklch(0.29 0.006 270);
+  --border-strong: oklch(0.36 0.008 270);
+  --fg: oklch(0.95 0.003 90);
+  --fg-muted: oklch(0.74 0.006 270);
+  --fg-subtle: oklch(0.63 0.008 270);
+  --accent: oklch(0.66 0.17 266);
+  --accent-hover: oklch(0.72 0.15 266);
+  --accent-fg: oklch(0.15 0.02 266);
+  --accent-soft: oklch(0.3 0.08 266);
+  --accent-soft-fg: oklch(0.86 0.08 266);
+  --ring: oklch(0.7 0.15 266 / 0.6);
+
+  --ok: oklch(0.75 0.14 155);
+  --ok-soft: oklch(0.3 0.06 155);
+  --warn: oklch(0.8 0.13 80);
+  --warn-soft: oklch(0.32 0.06 75);
+  --bad: oklch(0.72 0.17 25);
+  --bad-soft: oklch(0.31 0.07 25);
+  --info: oklch(0.75 0.11 230);
+  --info-soft: oklch(0.3 0.05 230);
+  --new: oklch(0.76 0.13 300);
+  --new-soft: oklch(0.31 0.07 300);
+
+  --highlight: oklch(0.75 0.15 95 / 0.3);
+  --highlight-strong: oklch(0.78 0.16 85 / 0.45);
+
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-md: 0 1px 2px oklch(0 0 0 / 0.3), 0 4px 12px -2px oklch(0 0 0 / 0.35);
+  --shadow-lg: 0 2px 4px oklch(0 0 0 / 0.3), 0 16px 40px -8px oklch(0 0 0 / 0.55);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+  --color-ring: var(--ring);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-new: var(--new);
+  --color-new-soft: var(--new-soft);
+  --color-highlight: var(--highlight);
+  --color-highlight-strong: var(--highlight-strong);
+
+  --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), ui-serif, Georgia, serif;
+  --font-mono: var(--font-code), ui-monospace, SFMono-Regular, monospace;
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--accent-soft-fg);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+}
+
+@layer components {
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface-sunken) 25%, var(--bg-subtle) 37%, var(--surface-sunken) 63%);
+    background-size: 400% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: var(--radius-md);
+  }
+  .glass {
+    background: color-mix(in oklch, var(--surface) 82%, transparent);
+    backdrop-filter: blur(16px) saturate(1.4);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translate(-50%, 8px) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
