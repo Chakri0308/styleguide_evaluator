@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 
 from stylelens.colors import hex_to_lab
+from stylelens.config import get_settings
 from stylelens.db.models import Element, Guide, GuideVersion
 from stylelens.db.session import SessionLocal
 from stylelens.extraction.colors import extract_colors
@@ -13,6 +14,7 @@ from stylelens.extraction.common import El, from_row
 from stylelens.extraction.images import extract_images
 from stylelens.extraction.rules import heuristic_rules, llm_rules
 from stylelens.extraction.typography import extract_typography
+from stylelens.extraction.visual_rules import extract_visual_rules
 from stylelens.llm.base import LLMRefusal, LLMUnavailable
 from stylelens.llm.client import generate_json, llm_available, model_spec
 from stylelens.schema.profile import RULE_CATEGORIES, ColorItem, ProfileStats, StyleProfile
@@ -79,6 +81,7 @@ async def build_profile(version_id: str, progress=None) -> StyleProfile:
         rows = list(await session.scalars(
             select(Element).where(Element.version_id == version_id).order_by(Element.seq)))
         title, doc_meta, fmt, page_count = version.title, version.meta or {}, guide.format, version.page_count
+        role = guide.role
     elements: list[El] = [from_row(r) for r in rows]
     warnings: list[str] = []
 
@@ -115,6 +118,15 @@ async def build_profile(version_id: str, progress=None) -> StyleProfile:
     await report(0.75, "Images")
     image_items = await extract_images(elements, images, palettes, title, warnings)
 
+    visual: list = []
+    # Candidates are checked page by page at comparison time; only guides need their diagrams read.
+    if role != "candidate" and get_settings().visual_checks and llm_available("vision"):
+        async def vprog(p: float, msg: str):
+            await report(0.85 + 0.14 * p, msg)
+
+        visual = await extract_visual_rules(version_id, elements, title, rules, warnings, vprog)
+        rules = rules + visual
+
     profile = StyleProfile(version_id=version_id, title=title, colors=colors, typography=typography,
                            images=image_items, fonts_detected=fonts)
     for i, r in enumerate(rules):
@@ -124,7 +136,9 @@ async def build_profile(version_id: str, progress=None) -> StyleProfile:
     profile.summary = first_para
     profile.stats = ProfileStats(
         pages=page_count, elements=len(elements), rules=len(rules), colors=len(colors), images=len(image_items),
+        visual_rules=sum(r.visual for r in rules),
         llm_used=llm_used, extraction_model=model_spec("extraction") if llm_used else None, warnings=warnings)
     assert all(hasattr(profile, c) for c in RULE_CATEGORIES)
-    await report(1.0, f"{len(colors)} colors, {len(typography)} type styles, {len(rules)} rules")
+    await report(1.0, f"{len(colors)} colors, {len(typography)} type styles, {len(rules)} rules"
+                      + (f" ({profile.stats.visual_rules} visual)" if profile.stats.visual_rules else ""))
     return profile

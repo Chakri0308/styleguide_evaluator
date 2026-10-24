@@ -1,8 +1,9 @@
 "use client";
 
-import { Check, Search, X } from "lucide-react";
+import { Check, Eye, Search, X } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip } from "@/components/ui/tooltip";
 import { RULE_CATEGORIES, type RuleCategory, type RuleItem, type StyleProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { EmptyNote, ProfileSection } from "./section";
@@ -44,6 +45,15 @@ function RuleCard({ rule, guideId }: { rule: RuleItem; guideId: string }) {
         )}
       </p>
       <div className="flex shrink-0 items-center gap-1.5">
+        {rule.visual && (
+          <Tooltip content={rule.check ? `Checked visually: ${rule.check}` : "Learned from a figure in the guide"}>
+            <span>
+              <Badge tone="info" outline>
+                <Eye className="size-3" /> Visual
+              </Badge>
+            </span>
+          </Tooltip>
+        )}
         <NormativeBadge level={rule.normative_level} />
         <SourceChip guideId={guideId} refs={rule.source_refs} label={rule.statement.slice(0, 80)} />
       </div>

@@ -33,7 +33,7 @@ async def health():
 @app.get("/assets/{key:path}", tags=["meta"])
 async def asset(key: str):
     """Derived assets (page renders, extracted images). Original uploads are not served here."""
-    if not key.startswith("guides/") or "/original/" in key:
+    if not key.startswith(("guides/", "comparisons/")) or "/original/" in key:
         raise HTTPException(404)
     try:
         data = await aget(key)

@@ -22,6 +22,10 @@ PROMPT_VERSIONS: dict[str, int] = {
     "judge_pair": 1,
     "judge_missing": 1,
     "suggest_followups": 1,
+    "extract_visual_rules": 1,
+    "detect_visual_subjects": 1,
+    "visual_check": 1,
+    "verify_visual": 1,
 }
 
 _env = Environment(undefined=StrictUndefined, autoescape=False, keep_trailing_newline=False,

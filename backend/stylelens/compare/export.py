@@ -94,6 +94,11 @@ def report_pdf(comp: dict) -> bytes:
         w.text(_ascii(f"[{f['status'].upper()} · {f['severity']}] {CATEGORY_LABEL.get(f['category'], f['category'])}"),
                8.5, bold=True, color=color)
         w.text(_ascii(f["summary"]), 10)
+        if rule := (f.get("data") or {}).get("rule"):
+            w.text(_ascii(f"Guide rule ({rule['normative_level']}): {rule['statement']}"
+                          + (f" [{rule['value']}]" if rule.get("value") else "")), 9, color=(0.2, 0.2, 0.3), indent=4)
+            if m := f["data"].get("measurement"):
+                w.text(_ascii(f"Measured: {m}"), 9, color=(0.2, 0.2, 0.3), indent=4)
         if f.get("reasoning"):
             w.text(_ascii(f["reasoning"]), 9, color=(0.35, 0.35, 0.4))
         for label, cites in (("Reference", f["reference_citations"]), ("Candidate", f["candidate_citations"])):

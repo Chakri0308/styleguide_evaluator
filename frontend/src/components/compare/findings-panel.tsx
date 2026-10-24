@@ -8,6 +8,7 @@ import type { CitationRefT, Comparison, FindingT } from "@/lib/types";
 import { FINDING_STATUSES } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { categoryLabel, SeverityPill, STATUS_META, StatusBadge, type StatusKey } from "./status";
+import { visualData, VisualEvidence } from "./visual-evidence";
 
 export interface FindingFilters {
   statuses: Set<string>;
@@ -30,7 +31,7 @@ export function applyFilters(findings: FindingT[], f: FindingFilters) {
       f.statuses.has(x.status) &&
       (f.severity === "all" || x.severity === f.severity) &&
       (f.category === "all" || x.category === f.category) &&
-      (!q || `${x.summary} ${x.reasoning}`.toLowerCase().includes(q)),
+      (!q || `${x.summary} ${x.reasoning} ${visualData(x)?.rule.statement ?? ""}`.toLowerCase().includes(q)),
   );
 }
 
@@ -73,6 +74,7 @@ function FindingRow({
   onShowSideBySide: () => void;
 }) {
   const meta = STATUS_META[f.status as StatusKey];
+  const visual = visualData(f);
   return (
     <div
       className={cn(
@@ -87,7 +89,9 @@ function FindingRow({
           <span className="mt-1 flex items-center gap-2 text-[11px] text-fg-subtle">
             {categoryLabel(f.category)}
             <SeverityPill severity={f.severity} />
-            {f.method !== "deterministic" && <span className="rounded bg-surface-sunken px-1">{f.method}</span>}
+            {f.method !== "deterministic" && (
+              <span className="rounded bg-surface-sunken px-1">{visual ? "vision" : f.method}</span>
+            )}
           </span>
         </span>
       </button>
@@ -97,11 +101,17 @@ function FindingRow({
             <StatusBadge status={f.status} />
             <span className="text-[11px] text-fg-subtle">confidence {(f.confidence * 100).toFixed(0)}%</span>
           </div>
-          {f.reasoning && <p className="text-[12.5px] leading-relaxed text-fg-muted">{f.reasoning}</p>}
-          {f.reference_citations.map((c, i) => (
+          {visual && <VisualEvidence f={f} onOpenCitation={onOpenCitation} />}
+          {f.reasoning && (
+            <div>
+              {visual && <div className="text-[10.5px] font-medium uppercase tracking-wider text-fg-subtle">Why it’s flagged</div>}
+              <p className="text-[12.5px] leading-relaxed text-fg-muted">{f.reasoning}</p>
+            </div>
+          )}
+          {!visual && f.reference_citations.map((c, i) => (
             <CitationBlock key={`r${i}`} label="Reference" cite={c} onOpen={() => onOpenCitation("reference", c)} />
           ))}
-          {f.candidate_citations.map((c, i) => (
+          {!visual && f.candidate_citations.map((c, i) => (
             <CitationBlock key={`c${i}`} label="Candidate" cite={c} onOpen={() => onOpenCitation("candidate", c)} />
           ))}
           <div className="flex gap-1.5 pt-0.5">

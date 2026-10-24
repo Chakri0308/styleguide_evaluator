@@ -8,7 +8,7 @@ from redis.asyncio import Redis
 from stylelens.config import get_settings
 
 INGEST_STAGES = ["parsing", "extracting", "chunking", "embedding", "indexing"]
-COMPARE_STAGES = ["aligning", "deterministic_checks", "judging", "scoring"]
+COMPARE_STAGES = ["aligning", "deterministic_checks", "visual_checks", "judging", "scoring"]
 
 _redis: Redis | None = None
 

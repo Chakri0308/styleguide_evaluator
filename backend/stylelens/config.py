@@ -62,6 +62,12 @@ class Settings(BaseSettings):
     # Comparison tuning
     delta_e_exact: float = 1.0
     delta_e_near: float = 3.0
+    # Visual rule checks (vision model): diagrams in the reference become rules, and candidate pages are
+    # checked against them with a second, independent look before a deviation is reported.
+    visual_checks: bool = True
+    visual_max_reference_pages: int = 30
+    visual_max_candidate_pages: int = 20
+    visual_min_confidence: float = 0.6
 
     # Prompts
     prompts_dir: Path = Path(__file__).resolve().parents[2] / "prompts"

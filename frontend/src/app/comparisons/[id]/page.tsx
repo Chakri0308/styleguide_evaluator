@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 const STAGE_LABELS = {
   aligning: "Aligning",
   deterministic_checks: "Exact checks",
+  visual_checks: "Visual checks",
   judging: "Judging",
   scoring: "Scoring",
 };
@@ -50,6 +51,7 @@ function Report({
     by_severity?: Record<string, number>;
     mode?: string;
     candidate_kind?: string;
+    visual?: { pages: number; rules: number; confirmed: number; rejected_on_second_look: number; uncertain: number } | null;
   };
   const issues = c.findings.filter((f) => f.status !== "compliant");
   const top = issues.filter((f) => f.severity === "critical" || f.severity === "major").slice(0, 6);
@@ -67,6 +69,14 @@ function Report({
             {summary.candidate_kind ? ` · treated as ${summary.candidate_kind === "asset" ? "an asset" : "a style guide"}` : ""}
             {summary.mode === "offline" ? " · offline judgment (no LLM)" : ""}
           </p>
+          {summary.visual && (
+            <p className="mt-1 text-[12.5px] text-fg-subtle">
+              Visual checks: {summary.visual.rules} rules from the guide’s figures on {summary.visual.pages} page
+              {summary.visual.pages === 1 ? "" : "s"} · {summary.visual.confirmed} confirmed
+              {summary.visual.rejected_on_second_look ? ` · ${summary.visual.rejected_on_second_look} dropped on a second look` : ""}
+              {summary.visual.uncertain ? ` · ${summary.visual.uncertain} too unclear to call` : ""}
+            </p>
+          )}
           <div className="mt-4 flex flex-wrap gap-2">
             {FINDING_STATUSES.map((s) =>
               summary.by_status?.[s] ? (

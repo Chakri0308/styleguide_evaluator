@@ -306,6 +306,9 @@ def dedupe(findings: list[FindingModel]) -> list[FindingModel]:
         cand = tuple(sorted({c.element_id or c.chunk_id for c in f.candidate_citations}))
         ref = tuple(sorted({c.element_id or c.chunk_id for c in f.reference_citations}))
         key = (f.category, cand, ref) if cand else (f.category, f.status, ref, f.summary)
+        if rule := (f.data or {}).get("rule"):
+            # Vision findings: one per rule and candidate page (several rules share a figure / page anchor)
+            key = ("vision", rule["id"], f.status, tuple(c.page for c in f.candidate_citations))
         if key in seen and seen[key].status != "compliant":
             continue
         seen[key] = f

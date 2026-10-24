@@ -74,6 +74,10 @@ class RuleItem(Model):
     polarity: Polarity = "do"
     normative_level: NormativeLevel = "should"
     source_refs: list[SourceRef] = Field(default_factory=list)
+    # Visual rules (clear space, placement, proportions, misuse…) learned from the guide's diagrams.
+    visual: bool = False
+    check: str | None = None  # how to verify the rule by looking at a page
+    figure: SourceRef | None = None  # the diagram that illustrates the rule (bbox in page points)
 
 
 class ImageItem(Model):
@@ -106,6 +110,7 @@ class ProfileStats(Model):
     rules: int = 0
     colors: int = 0
     images: int = 0
+    visual_rules: int = 0
     llm_used: bool = False
     extraction_model: str | None = None
     warnings: list[str] = Field(default_factory=list)

@@ -22,7 +22,11 @@ exact highlighted passage.
    region highlighted.
 3. **Upload a document to check.** This can be another style guide, a marketing asset, a deck, a
    web page or copy.
-4. **Run a comparison.** You get a cited compliance report (compliant / deviation / missing / conflict / new) with an
+4. **Run a comparison.** Text, colour and type are checked, and so are the guide's *visual* rules
+   (clear space, lockups, proportions, placement, logo misuse, imagery style). Those are read from
+   the guide's diagrams by a vision model and checked page by page against the candidate. Each visual
+   finding shows the guide's rule and figure next to the flagged region, what was measured, and
+   whether an independent second look confirmed it. You get a cited compliance report (compliant / deviation / missing / conflict / new) with an
    overall score, a per-area breakdown, a side-by-side view with synced scrolling and linked highlights,
    and PDF/JSON export.
 5. **Ask the guide.** A streaming chat dock answers only from the guide, with numbered citations.
@@ -94,6 +98,7 @@ flowchart LR
 | **Retrieval** (`retrieval/`) | Parent/child chunks that follow the heading hierarchy (tables and list items are never split), image chunks, and contextual headers. Search combines query rewriting from chat history (plus optional multi-query) and intent classification with Postgres FTS and pgvector, fuses them with RRF (ties broken by chunk id), reranks with a cross-encoder and applies a relevance threshold. Context is expanded to parent sections with stable source numbers. Every index is versioned per `GuideVersion`, and re-ingesting creates a new version. |
 | **Chat** (`chat/`) | SSE streaming. Grounded answers come from a versioned prompt. Citation verification drops invalid ids and flags unsupported claims, checked lexically (exact values must match) and by a verifier model. There are follow-up suggestions and feedback. |
 | **Comparison** (`compare/`) | Section alignment uses the same hybrid retrieval. Deterministic checks cover colour (exact, near, deviation, prohibited, off-palette, missing), WCAG contrast, typography, phrasings mined from the reference's own don't-rules, and visual similarity to the guide's don't examples. The LLM judge returns strict JSON whose citations must resolve to real chunks. Missing-rule detection and per-category scoring follow, with PDF/JSON export. |
+| **Visual rules** (`extraction/visual_rules.py`, `compare/visual.py`) | Guide pages about logos, layout and imagery are read by the vision model, which turns their diagrams into atomic rules (statement, value, how to check, figure region). Diagrams that restate a text rule are attached to it instead of duplicating it. At comparison time each candidate page goes through three steps: subject detection (logos, taglines, CTAs, photos), a judgment of the applicable rules with the guide's figures alongside, then an independent zoomed second look at every suspected deviation. Only deviations that both looks agree on are reported, with the measurement, both regions highlighted and the crops shown. |
 | **LLM layer** (`llm/`) | Provider-agnostic roles (`generation`, `extraction`, `vision`, `fast`) configured as `provider:model` (`anthropic:` or `gemini:`). Prompts are versioned files in `/prompts`. Responses are cached by content hash. |
 
 ### Consistency (same question, same answer)
@@ -122,6 +127,7 @@ All settings are environment variables (see `.env.example`):
 | `RERANKER_MODEL` | `local:BAAI/bge-reranker-v2-m3` | Or `lexical`, `none` |
 | `IMAGE_EMBEDDING_MODEL` | `local:clip-ViT-B-32` | Or `hist`, `none`; falls back to `hist` if CLIP can't load |
 | `RETRIEVAL_CANDIDATES` / `RERANK_TOP_K` / `RERANK_THRESHOLD` / `RRF_K` / `MULTI_QUERY` | 50 / 6 / reranker default / 60 / false | Retrieval tuning |
+| `VISUAL_CHECKS` / `VISUAL_MAX_REFERENCE_PAGES` / `VISUAL_MAX_CANDIDATE_PAGES` / `VISUAL_MIN_CONFIDENCE` | true / 30 / 20 / 0.6 | Visual rule extraction and checking (needs a vision-capable `LLM_VISION_MODEL`) |
 | `DELTA_E_EXACT` / `DELTA_E_NEAR` | 1.0 / 3.0 | Colour match thresholds (CIEDE2000) |
 | `STORAGE_BACKEND` | `local` (a Docker volume in compose) | `s3` for S3 or any S3-compatible store; settings `S3_*` |
 | `JOB_MODE` | `arq` | `inline` runs jobs inside the API process |

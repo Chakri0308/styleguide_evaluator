@@ -9,7 +9,7 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from stylelens import events
 from stylelens.compare import deterministic as det
-from stylelens.compare import semantic
+from stylelens.compare import semantic, visual
 from stylelens.compare.cite import load_index
 from stylelens.compare.schema import CATEGORIES, FindingModel
 from stylelens.db.models import Comparison, Finding, Guide, GuideVersion, StyleProfile as ProfileRow
@@ -127,6 +127,26 @@ async def run_comparison(comparison_id: str) -> None:
         findings += det.check_visual_examples(ref, cand, ri, ci)
         await r.update(stage, status="done", message=f"{len(findings)} findings from color, contrast, type and copy checks")
 
+        stage = "visual_checks"
+        await r.update(stage, status="running")
+        visual_stats = None
+        if visual.available(ref):
+            checker = visual.VisualChecker(comparison_id, ref, ri, ci, ref_title, cand_title)
+
+            async def vprog(p, m):
+                await r.update("visual_checks", progress=p, message=m)
+
+            vf = await checker.run(vprog)
+            findings += vf
+            st = checker.stats
+            visual_stats = {"pages": st.pages, "rules": st.rules, "judged": st.judged, "confirmed": st.confirmed,
+                            "rejected_on_second_look": st.rejected, "uncertain": st.uncertain, "errors": st.errors[:5]}
+            msg = (f"{st.rules} visual rules on {st.pages} page(s): {st.confirmed} confirmed deviations, "
+                   f"{st.rejected} rejected on second look")
+        else:
+            msg = "Skipped (needs a vision model and visual rules in the reference)"
+        await r.update(stage, status="done", message=msg)
+
         stage = "judging"
         await r.update(stage, status="running")
         if semantic.use_llm():
@@ -150,6 +170,7 @@ async def run_comparison(comparison_id: str) -> None:
         summary = score(findings)
         summary["mode"] = "llm" if semantic.use_llm() else "offline"
         summary["candidate_kind"] = "style_guide" if guide_like else "asset"
+        summary["visual"] = visual_stats
         async with SessionLocal() as session:
             await session.execute(delete(Finding).where(Finding.comparison_id == comparison_id))
             for i, f in enumerate(findings):

@@ -842,6 +842,11 @@ export interface components {
              */
             images: number;
             /**
+             * Visual Rules
+             * @default 0
+             */
+            visual_rules: number;
+            /**
              * Llm Used
              * @default false
              */
@@ -887,6 +892,14 @@ export interface components {
             normative_level: "must" | "should" | "may";
             /** Source Refs */
             source_refs: components["schemas"]["SourceRef"][];
+            /**
+             * Visual
+             * @default false
+             */
+            visual: boolean;
+            /** Check */
+            check: string | null;
+            figure: components["schemas"]["SourceRef"] | null;
         };
         /** SearchHit */
         SearchHit: {

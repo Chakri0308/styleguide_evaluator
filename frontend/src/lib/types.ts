@@ -39,7 +39,7 @@ export type FindingT = S["FindingOut"];
 export type CitationRefT = S["CitationRef"];
 export type ComparisonListItem = S["ComparisonListItem"];
 
-export const COMPARE_STAGES = ["aligning", "deterministic_checks", "judging", "scoring"] as const;
+export const COMPARE_STAGES = ["aligning", "deterministic_checks", "visual_checks", "judging", "scoring"] as const;
 export const FINDING_STATUSES = ["conflict", "deviation", "missing", "new", "compliant"] as const;
 export const SEVERITIES = ["critical", "major", "minor", "info"] as const;
 export const FINDING_CATEGORIES: Record<string, string> = {
