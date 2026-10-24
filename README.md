@@ -37,7 +37,7 @@ pages in both themes), `prefers-reduced-motion` support, and layouts down to tab
 ## Quick start
 
 ```bash
-cp .env.example .env          # add ANTHROPIC_API_KEY for full extraction, chat and LLM judgment
+cp .env.example .env          # add ANTHROPIC_API_KEY (or GEMINI_API_KEY, see below) for full extraction, chat and LLM judgment
 docker compose up --build     # web on http://localhost:3000, API on http://localhost:8000
 ```
 
@@ -94,7 +94,7 @@ flowchart LR
 | **Retrieval** (`retrieval/`) | Parent/child chunks that follow the heading hierarchy (tables and list items are never split), image chunks, and contextual headers. Search combines query rewriting from chat history (plus optional multi-query) and intent classification with Postgres FTS and pgvector, fuses them with RRF (ties broken by chunk id), reranks with a cross-encoder and applies a relevance threshold. Context is expanded to parent sections with stable source numbers. Every index is versioned per `GuideVersion`, and re-ingesting creates a new version. |
 | **Chat** (`chat/`) | SSE streaming. Grounded answers come from a versioned prompt. Citation verification drops invalid ids and flags unsupported claims, checked lexically (exact values must match) and by a verifier model. There are follow-up suggestions and feedback. |
 | **Comparison** (`compare/`) | Section alignment uses the same hybrid retrieval. Deterministic checks cover colour (exact, near, deviation, prohibited, off-palette, missing), WCAG contrast, typography, phrasings mined from the reference's own don't-rules, and visual similarity to the guide's don't examples. The LLM judge returns strict JSON whose citations must resolve to real chunks. Missing-rule detection and per-category scoring follow, with PDF/JSON export. |
-| **LLM layer** (`llm/`) | Provider-agnostic roles (`generation`, `extraction`, `vision`, `fast`) configured as `provider:model`. Prompts are versioned files in `/prompts`. Responses are cached by content hash. |
+| **LLM layer** (`llm/`) | Provider-agnostic roles (`generation`, `extraction`, `vision`, `fast`) configured as `provider:model` (`anthropic:` or `gemini:`). Prompts are versioned files in `/prompts`. Responses are cached by content hash. |
 
 ### Consistency (same question, same answer)
 
@@ -116,7 +116,8 @@ All settings are environment variables (see `.env.example`):
 |---|---|---|
 | `ANTHROPIC_API_KEY` | – | Enables LLM extraction, vision, chat generation and judgment |
 | `LLM_GENERATION_MODEL` / `LLM_EXTRACTION_MODEL` / `LLM_VISION_MODEL` / `LLM_FAST_MODEL` | `anthropic:claude-opus-5-5` | Point extraction/fast at `claude-sonnet-5-5` or `claude-haiku-5-5` to cut cost |
-| `LLM_REFUSAL_FALLBACK` | `default` | Server-side refusal fallback (`off` to disable) |
+| `GEMINI_API_KEY` | – | Alternative to Claude: set it and point the four `LLM_*_MODEL` roles at `gemini:gemini-flash-latest` (or another Gemini model id) |
+| `LLM_REFUSAL_FALLBACK` | `default` | Server-side refusal fallback, Anthropic only (`off` to disable) |
 | `EMBEDDING_MODEL` / `EMBEDDING_DIM` | `local:BAAI/bge-m3` / `1024` | Or `hash:1024` for offline tests |
 | `RERANKER_MODEL` | `local:BAAI/bge-reranker-v2-m3` | Or `lexical`, `none` |
 | `IMAGE_EMBEDDING_MODEL` | `local:clip-ViT-B-32` | Or `hist`, `none`; falls back to `hist` if CLIP can't load |

@@ -3,6 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,6 +30,8 @@ class Settings(BaseSettings):
 
     # LLM layer. Each role can be swapped independently ("provider:model").
     anthropic_api_key: str | None = None
+    # Google Gemini (use with "gemini:<model>" in the LLM_*_MODEL settings). GOOGLE_API_KEY also works.
+    gemini_api_key: str | None = Field(default=None, validation_alias=AliasChoices("GEMINI_API_KEY", "GOOGLE_API_KEY"))
     # Sampling parameters are intentionally absent: current Claude models only accept defaults, so
     # consistency comes from the response cache and deterministic retrieval.
     llm_generation_model: str = "anthropic:claude-opus-5-5"

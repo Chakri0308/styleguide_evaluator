@@ -40,6 +40,12 @@ def get_provider(role: str) -> Provider:
         from stylelens.llm.anthropic_provider import AnthropicProvider
 
         return AnthropicProvider(model)
+    if provider == "gemini":
+        if not get_settings().gemini_api_key:
+            raise LLMUnavailable("GEMINI_API_KEY is not set")
+        from stylelens.llm.gemini_provider import GeminiProvider
+
+        return GeminiProvider(model or "gemini-flash-latest")
     if provider == "fake":
         from stylelens.llm.fake_provider import FakeProvider
 
