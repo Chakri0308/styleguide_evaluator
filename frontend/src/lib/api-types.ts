@@ -847,6 +847,11 @@ export interface components {
              */
             visual_rules: number;
             /**
+             * Visually Checkable
+             * @default 0
+             */
+            visually_checkable: number;
+            /**
              * Llm Used
              * @default false
              */
@@ -897,6 +902,13 @@ export interface components {
              * @default false
              */
             visual: boolean;
+            /**
+             * Visual Checkable
+             * @default false
+             */
+            visual_checkable: boolean;
+            /** Visual Subject */
+            visual_subject: string | null;
             /** Check */
             check: string | null;
             figure: components["schemas"]["SourceRef"] | null;

@@ -9,7 +9,6 @@ second look at a zoomed crop (with the guide's figure) before it is reported.
 
 import asyncio
 import logging
-import re
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -22,6 +21,7 @@ from stylelens.compare.schema import CitationRef, FindingModel, finding_category
 from stylelens.config import get_settings
 from stylelens.db.models import Page
 from stylelens.db.session import SessionLocal
+from stylelens.extraction.rule_routing import heuristic_route, heuristic_subject
 from stylelens.llm.base import LLMRefusal, LLMUnavailable
 from stylelens.llm.client import generate_json, llm_available, model_spec
 from stylelens.schema.profile import RuleItem, StyleProfile
@@ -29,21 +29,23 @@ from stylelens.storage import aget, aput
 from stylelens.visual import box_to_bbox, crop, overlap, shrink
 
 log = logging.getLogger(__name__)
-VISUAL_CATEGORIES = {"logo_rules", "imagery_rules", "spacing_grid"}
-MAX_RULES = 60
+MAX_RULES = 120
 BATCH = 10
 MAX_FIGURES = 6
 CONCURRENCY = 4
 SEVERITY_RANK = {"info": 0, "minor": 1, "major": 2, "critical": 3}
+ALL_SUBJECTS = {"logo", "tagline", "cta", "headline", "body_text", "photo", "illustration", "icon", "chart", "layout"}
+# Which detected subjects make a rule group worth judging on a page
 GROUP_SUBJECTS = {
-    "logo": {"logo", "tagline", "cta"},
+    "logo": {"logo", "tagline"},
     "imagery": {"photo", "illustration", "icon"},
-    "layout": {"layout", "headline", "cta", "chart", "logo", "tagline", "photo", "illustration", "icon"},
+    "typography": {"headline", "body_text", "cta", "tagline"},
+    "color": ALL_SUBJECTS,
+    "layout": ALL_SUBJECTS,
 }
-LOGO_RE = re.compile(r"logo|lock-?up|wordmark|symbol|monogram|tagline|clear\s*space|exclusion", re.I)
-IMAGERY_RE = re.compile(r"photo|imagery|image|illustrat|icon", re.I)
 
-SubjectKind = Literal["logo", "tagline", "cta", "headline", "photo", "illustration", "icon", "chart", "layout"]
+SubjectKind = Literal["logo", "tagline", "cta", "headline", "body_text", "photo", "illustration", "icon", "chart",
+                      "layout"]
 
 
 class Subject(BaseModel):
@@ -102,17 +104,19 @@ class Stats:
 
 
 def visual_rules(ref: StyleProfile) -> list[RuleItem]:
-    rules = [r for r in ref.all_rules() if r.visual or r.category in VISUAL_CATEGORIES]
-    rules.sort(key=lambda r: (not r.visual, {"must": 0, "should": 1, "may": 2}[r.normative_level]))
+    """Every rule that can be verified by looking: figure rules and text rules routed as visual."""
+    rules = ref.all_rules()
+    if not any(r.visual_checkable for r in rules):  # profile built before rule routing existed
+        for r in rules:
+            heuristic_route(r)
+    rules = [r for r in rules if r.visual or r.visual_checkable]
+    rules.sort(key=lambda r: ({"must": 0, "should": 1, "may": 2}[r.normative_level], not r.visual))
     return rules[:MAX_RULES]
 
 
 def rule_group(r: RuleItem) -> str:
-    if r.category == "logo_rules" or LOGO_RE.search(r.statement):
-        return "logo"
-    if r.category == "imagery_rules" or IMAGERY_RE.search(r.statement):
-        return "imagery"
-    return "layout"
+    g = r.visual_subject or heuristic_subject(r)
+    return g if g in GROUP_SUBJECTS else "layout"
 
 
 def describe_rule(label: str, r: RuleItem, fig: str | None) -> str:

@@ -45,11 +45,15 @@ function RuleCard({ rule, guideId }: { rule: RuleItem; guideId: string }) {
         )}
       </p>
       <div className="flex shrink-0 items-center gap-1.5">
-        {rule.visual && (
-          <Tooltip content={rule.check ? `Checked visually: ${rule.check}` : "Learned from a figure in the guide"}>
+        {(rule.visual || rule.visual_checkable) && (
+          <Tooltip
+            content={`${rule.visual ? "Learned from a figure in the guide. " : "Written rule, checked by looking at each page. "}${
+              rule.check ? `Check: ${rule.check}` : ""
+            }`}
+          >
             <span>
               <Badge tone="info" outline>
-                <Eye className="size-3" /> Visual
+                <Eye className="size-3" /> {rule.visual ? "Figure" : "Visual check"}
               </Badge>
             </span>
           </Tooltip>

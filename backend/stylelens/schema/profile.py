@@ -76,6 +76,10 @@ class RuleItem(Model):
     source_refs: list[SourceRef] = Field(default_factory=list)
     # Visual rules (clear space, placement, proportions, misuse…) learned from the guide's diagrams.
     visual: bool = False
+    # Whether the rule can be verified by looking at a page (text rules like "never show the logo in
+    # yellow" included), and what it is about visually: logo | imagery | typography | color | layout
+    visual_checkable: bool = False
+    visual_subject: str | None = None
     check: str | None = None  # how to verify the rule by looking at a page
     figure: SourceRef | None = None  # the diagram that illustrates the rule (bbox in page points)
 
@@ -110,7 +114,8 @@ class ProfileStats(Model):
     rules: int = 0
     colors: int = 0
     images: int = 0
-    visual_rules: int = 0
+    visual_rules: int = 0  # learned from figures
+    visually_checkable: int = 0  # text or figure rules the visual check verifies
     llm_used: bool = False
     extraction_model: str | None = None
     warnings: list[str] = Field(default_factory=list)

@@ -26,6 +26,7 @@ PROMPT_VERSIONS: dict[str, int] = {
     "detect_visual_subjects": 1,
     "visual_check": 1,
     "verify_visual": 1,
+    "classify_rules": 1,
 }
 
 _env = Environment(undefined=StrictUndefined, autoescape=False, keep_trailing_newline=False,

@@ -73,6 +73,10 @@ def fake_vision(monkeypatch):
             elif stmt == ROTATE:
                 verdicts.append(base | {"status": "deviation", "observation": "Logo looks tilted.",
                                         "reasoning": "Rotation is forbidden.", "summary": "Logo is rotated."})
+            elif "recolor the logo" in stmt:  # a text rule, checked by looking at the logo
+                verdicts.append(base | {"status": "deviation", "observation": "The logo is rendered in yellow (#F5C400).",
+                                        "reasoning": "The guide only allows Harbor Blue, Roast or white.",
+                                        "summary": "Logo is yellow; use Harbor Blue, Roast or white."})
             elif stmt.startswith("Keep clear space"):
                 verdicts.append(base | {"status": "compliant", "observation": "Ample space around the logo.",
                                         "reasoning": "Clear space exceeds the N height.", "summary": "Clear space respected."})
@@ -126,8 +130,8 @@ async def test_visual_rules_extracted_and_checked(client, fake_vision):
     assert comp["stages"]["visual_checks"]["status"] == "done"
     vis = [f for f in comp["findings"] if f["data"].get("engine") == "vision"]
 
-    dev = [f for f in vis if f["status"] == "deviation"]
-    assert [f["data"]["rule"]["statement"] for f in dev] == [TAGLINE] * len(dev) and dev
+    dev = [f for f in vis if f["status"] == "deviation" and f["data"]["rule"]["statement"] == TAGLINE]
+    assert dev
     f = dev[0]
     assert f["severity"] in ("major", "critical")  # "must" rules never drop below major
     assert f["data"]["verification"]["status"] == "deviation"
@@ -138,6 +142,8 @@ async def test_visual_rules_extracted_and_checked(client, fake_vision):
     for c in f["reference_citations"] + f["candidate_citations"]:
         assert (await client.get(f"/chunks/{c['chunk_id']}")).status_code == 200
 
+    recolor = [x for x in vis if "recolor the logo" in x["data"]["rule"]["statement"]]
+    assert recolor and recolor[0]["status"] == "deviation" and not recolor[0]["data"]["rule"]["from_figure"]
     assert not any(x["data"]["rule"]["statement"] == ROTATE for x in vis)  # rejected on second look
     assert ROTATE in fake_vision["verify"]
     assert any(x["status"] == "compliant" and "clear space" in x["data"]["rule"]["statement"].lower() for x in vis)
@@ -146,3 +152,41 @@ async def test_visual_rules_extracted_and_checked(client, fake_vision):
 
     pdf = (await client.get(f"/comparisons/{cid}/export?format=pdf")).content
     assert pdf.startswith(b"%PDF")
+
+
+async def test_text_rules_routed_to_visual_check(monkeypatch):
+    from stylelens.extraction.rule_routing import route_rules
+    from stylelens.schema.profile import RuleItem
+
+    monkeypatch.setattr(get_settings(), "llm_extraction_model", "fake:fake")
+
+    @fake_provider.register("classify_rules")
+    def _route(meta, messages):
+        out = []
+        for rid, stmt in re.findall(r"^- (\S+) \[[^\]]*\] (.+)$", meta.variables["rules"], re.M):
+            visual = "yellow" in stmt
+            out.append({"id": rid, "mode": "visual" if visual else "text", "subject": "logo" if visual else "text",
+                        "check": "Find every logo; flag any rendered in yellow." if visual else None})
+        return {"rules": out}
+
+    try:
+        rules = [RuleItem(id="rule-1", category="color_usage", statement="Never reproduce the logo in yellow.",
+                          polarity="dont"),
+                 RuleItem(id="rule-2", category="writing_rules", statement="Write dates as March 4, 2025.")]
+        await route_rules(rules, "Guide", [])
+        assert rules[0].visual_checkable and rules[0].visual_subject == "logo" and "yellow" in rules[0].check
+        assert not rules[1].visual_checkable
+    finally:
+        fake_provider.HANDLERS.pop("classify_rules", None)
+
+
+def test_heuristic_routing_without_llm():
+    from stylelens.extraction.rule_routing import heuristic_route
+    from stylelens.schema.profile import RuleItem
+
+    color = RuleItem(id="a", category="color_usage", statement="The logo is never yellow.")
+    tone = RuleItem(id="b", category="voice_tone", statement="Sound warm and direct.")
+    heuristic_route(color)
+    heuristic_route(tone)
+    assert color.visual_checkable and color.visual_subject == "logo"
+    assert not tone.visual_checkable

@@ -12,6 +12,7 @@ from stylelens.db.session import SessionLocal
 from stylelens.extraction.colors import extract_colors
 from stylelens.extraction.common import El, from_row
 from stylelens.extraction.images import extract_images
+from stylelens.extraction.rule_routing import heuristic_subject, route_rules
 from stylelens.extraction.rules import heuristic_rules, llm_rules
 from stylelens.extraction.typography import extract_typography
 from stylelens.extraction.visual_rules import extract_visual_rules
@@ -132,13 +133,21 @@ async def build_profile(version_id: str, progress=None) -> StyleProfile:
     for i, r in enumerate(rules):
         r.id = f"rule-{i + 1}"
         getattr(profile, r.category).append(r)
+    if role != "candidate":
+        # Decide which rules (text or figure) the visual check should verify on candidate pages
+        await report(0.99, "Routing rules to text and visual checks")
+        await route_rules([r for r in rules if not r.visual], title, warnings)
+        for r in rules:
+            if r.visual:
+                r.visual_checkable = True
+                r.visual_subject = r.visual_subject or heuristic_subject(r)
     first_para = next((e.text for e in elements if e.type == "paragraph" and len(e.text) > 60), None)
     profile.summary = first_para
     profile.stats = ProfileStats(
         pages=page_count, elements=len(elements), rules=len(rules), colors=len(colors), images=len(image_items),
-        visual_rules=sum(r.visual for r in rules),
+        visual_rules=sum(r.visual for r in rules), visually_checkable=sum(r.visual_checkable for r in rules),
         llm_used=llm_used, extraction_model=model_spec("extraction") if llm_used else None, warnings=warnings)
     assert all(hasattr(profile, c) for c in RULE_CATEGORIES)
     await report(1.0, f"{len(colors)} colors, {len(typography)} type styles, {len(rules)} rules"
-                      + (f" ({profile.stats.visual_rules} visual)" if profile.stats.visual_rules else ""))
+                      + (f", {profile.stats.visually_checkable} checked visually" if profile.stats.visually_checkable else ""))
     return profile
